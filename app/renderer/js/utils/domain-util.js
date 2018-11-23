@@ -20,7 +20,7 @@ const logger = new Logger({
 
 let instance = null;
 
-const defaultIconUrl = '../renderer/img/icon.png';
+const defaultIconUrl = '../../img/icon.png';
 
 class DomainUtil {
 	constructor() {
