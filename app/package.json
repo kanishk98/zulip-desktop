@@ -44,6 +44,6 @@
     "sortablejs": "*"
   },
   "optionalDependencies": {
-    "node-mac-notifier": "0.1.0"
+    "node-mac-notifier": "1.1.0"
   }
 }
