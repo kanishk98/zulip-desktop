@@ -759,6 +759,10 @@ class ServerManagerView {
 		ipcRenderer.on('copy-zulip-url', () => {
 			clipboard.writeText(DomainUtil.getDomain(this.activeTabIndex).url);
 		});
+
+		ipcRenderer.on('new-server', () => {
+			this.openSettings('AddServer');
+		});
 	}
 }
 
