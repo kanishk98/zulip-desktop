@@ -10,6 +10,7 @@ const escape = require('escape-html');
 const Logger = require('./logger-util');
 
 const RequestUtil = require(__dirname + '/../utils/request-util.js');
+const EnterpriseUtil = require(__dirname + '/../utils/enterprise-util.js');
 
 const logger = new Logger({
 	file: `domain-util.log`,
@@ -80,13 +81,21 @@ class DomainUtil {
 	}
 
 	removeDomains() {
+		if (EnterpriseUtil.isAdminOnly('presetOrganizations')) {
+			return false;
+		}
 		this.db.delete('/domains');
 		this.reloadDB();
+		return true;
 	}
 
 	removeDomain(index) {
+		if (EnterpriseUtil.isAdminOnly('presetOrganizations')) {
+			return false;
+		}
 		this.db.delete(`/domains[${index}]`);
 		this.reloadDB();
+		return true;
 	}
 
 	// Check if domain is already added
@@ -103,10 +112,13 @@ class DomainUtil {
 
 	// ignoreCerts parameter helps in fetching server icon and
 	// other server details when user chooses to ignore certificate warnings
-	checkDomain(domain, ignoreCerts = false, silent = false) {
+	checkDomain(domain, {ignoreCerts = false, silent = false, override = false} = {}) {
 		if (!silent && this.duplicateDomain(domain)) {
 			// Do not check duplicate in silent mode
 			return Promise.reject('This server has been added.');
+		}
+		if (EnterpriseUtil.isAdminOnly('presetOrganizations') && override === false) {
+			return Promise.reject('Adding organizations is a restricted operation. Please contact your system administrator.');
 		}
 
 		domain = this.formatUrl(domain);

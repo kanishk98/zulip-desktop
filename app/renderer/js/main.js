@@ -170,7 +170,7 @@ class ServerManagerView {
 			}
 			try {
 				// eslint-disable-next-line no-await-in-loop
-				const serverConf = await DomainUtil.checkDomain(presetOrgs[url]);
+				const serverConf = await DomainUtil.checkDomain(presetOrgs[url], {override: true});
 				try {
 					// eslint-disable-next-line no-await-in-loop
 					await DomainUtil.addDomain(serverConf);
