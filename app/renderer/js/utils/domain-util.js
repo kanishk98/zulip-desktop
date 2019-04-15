@@ -9,8 +9,9 @@ const escape = require('escape-html');
 
 const Logger = require('./logger-util');
 
-const RequestUtil = require(__dirname + '/../utils/request-util.js');
 const Messages = require(__dirname + '/../../../resources/messages.js');
+const RequestUtil = require(__dirname + '/../utils/request-util.js');
+const EnterpriseUtil = require(__dirname + '/../utils/enterprise-util.js');
 
 const logger = new Logger({
 	file: `domain-util.log`,
@@ -81,13 +82,21 @@ class DomainUtil {
 	}
 
 	removeDomains() {
+		if (EnterpriseUtil.isAdminOnly('presetOrganizations')) {
+			return false;
+		}
 		this.db.delete('/domains');
 		this.reloadDB();
+		return true;
 	}
 
 	removeDomain(index) {
+		if (EnterpriseUtil.isAdminOnly('presetOrganizations')) {
+			return false;
+		}
 		this.db.delete(`/domains[${index}]`);
 		this.reloadDB();
+		return true;
 	}
 
 	// Check if domain is already added
@@ -139,7 +148,7 @@ class DomainUtil {
 
 	// ignoreCerts parameter helps in fetching server icon and
 	// other server details when user chooses to ignore certificate warnings
-	async checkDomain(domain, ignoreCerts = false, silent = false) {
+	async checkDomain(domain, {ignoreCerts = false, silent = false} = {}) {
 		if (!silent && this.duplicateDomain(domain)) {
 			// Do not check duplicate in silent mode
 			throw new Error('This server has been added.');

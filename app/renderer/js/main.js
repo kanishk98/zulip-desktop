@@ -569,6 +569,13 @@ class ServerManagerView {
 							message: 'Are you sure you want to disconnect this organization?'
 						}, response => {
 							if (response === 0) {
+								if (EnterpriseUtil.isAdminOnly('presetOrganizations')) {
+									dialog.showErrorBox(
+										'Removing organizations is a restricted operation',
+										'Please contact your system administrator.'
+									);
+									return;
+								}
 								DomainUtil.removeDomain(index);
 								ipcRenderer.send('reload-full-app');
 							}
