@@ -16,6 +16,7 @@ const DNDUtil = require(__dirname + '/js/utils/dnd-util.js');
 const ReconnectUtil = require(__dirname + '/js/utils/reconnect-util.js');
 const Logger = require(__dirname + '/js/utils/logger-util.js');
 const CommonUtil = require(__dirname + '/js/utils/common-util.js');
+const MemoryUtil = require(__dirname + '/js/utils/memory-util.js');
 
 const { feedbackHolder } = require(__dirname + '/js/feedback.js');
 
@@ -62,6 +63,7 @@ class ServerManagerView {
 			this.initActions();
 			this.registerIpcs();
 			this.initDefaultSettings();
+			this.initMemoryLogger();
 		});
 	}
 
@@ -120,7 +122,8 @@ class ServerManagerView {
 				silent: false
 			},
 			downloadsPath: `${app.getPath('downloads')}`,
-			showDownloadFolder: false
+			showDownloadFolder: false,
+			memoryLogInterval: 10000
 		};
 
 		// Platform specific settings
@@ -245,6 +248,10 @@ class ServerManagerView {
 	initDNDButton() {
 		const dnd = ConfigUtil.getConfigItem('dnd', false);
 		this.toggleDNDButton(dnd);
+	}
+
+	initMemoryLogger() {
+		MemoryUtil.startLogging(ConfigUtil.getConfigItem('memoryLogInterval', 0));
 	}
 
 	getTabIndex() {
