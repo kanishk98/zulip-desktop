@@ -95,6 +95,13 @@ class AppMenu {
 					AppMenu.sendAction('tab-devtools');
 				}
 			}
+		}, {
+			label: 'Clear session cache',
+			click(item, focusedWindow) {
+				if (focusedWindow) {
+					focusedWindow.webContents.session.clearCache(() => {});
+				}
+			}
 		}];
 	}
 
@@ -245,6 +252,17 @@ class AppMenu {
 				click(item, focusedWindow) {
 					if (focusedWindow) {
 						AppMenu.sendAction('switch-server-tab', AppMenu.getPreviousServer(tabs, activeTabIndex));
+					}
+				}
+			});
+			initialSubmenu.push({
+				type: 'separator'
+			});
+			initialSubmenu.push({
+				label: 'Clear webFrame cache',
+				click(item, focusedWindow) {
+					if (focusedWindow) {
+						AppMenu.sendAction('clear-webframe-cache');
 					}
 				}
 			});

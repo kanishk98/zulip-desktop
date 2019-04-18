@@ -1,6 +1,6 @@
 'use strict';
 
-const { ipcRenderer, remote, clipboard } = require('electron');
+const { ipcRenderer, remote, clipboard, webFrame } = require('electron');
 const isDev = require('electron-is-dev');
 
 const { session, app, Menu, dialog } = remote;
@@ -577,6 +577,10 @@ class ServerManagerView {
 				}
 			});
 		}
+
+		ipcRenderer.on('clear-webframe-cache', () => {
+			webFrame.clearCache();
+		});
 
 		ipcRenderer.on('open-settings', (event, settingNav) => {
 			this.openSettings(settingNav);
