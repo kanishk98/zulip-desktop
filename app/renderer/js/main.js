@@ -59,6 +59,7 @@ class ServerManagerView {
 	init() {
 		this.loadProxy().then(() => {
 			this.initSidebar();
+			this.initPresetOrgs();
 			this.initTabs();
 			this.initActions();
 			this.registerIpcs();
@@ -157,6 +158,35 @@ class ServerManagerView {
 	initSidebar() {
 		const showSidebar = ConfigUtil.getConfigItem('showSidebar', true);
 		this.toggleSidebar(showSidebar);
+	}
+
+	async initPresetOrgs() {
+		const presetOrgs = EnterpriseUtil.getConfigItem('presetOrganizations', []);
+		// set to true if at least one new domain is added
+		let domainAdded = false;
+		for (const url in presetOrgs) {
+			if (DomainUtil.duplicateDomain(presetOrgs[url])) {
+				continue;
+			}
+			try {
+				// eslint-disable-next-line no-await-in-loop
+				const serverConf = await DomainUtil.checkDomain(presetOrgs[url]);
+				try {
+					// eslint-disable-next-line no-await-in-loop
+					await DomainUtil.addDomain(serverConf);
+					domainAdded = true;
+				} catch (err) {
+					logger.error(err);
+					logger.error('Could not add ' + presetOrgs[url] + '. Please contact your system administrator.');
+				}
+			} catch (err) {
+				logger.error(err);
+				continue;
+			}
+		}
+		if (domainAdded) {
+			ipcRenderer.send('reload-full-app');
+		}
 	}
 
 	initTabs() {

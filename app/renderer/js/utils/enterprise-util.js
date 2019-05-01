@@ -1,5 +1,6 @@
 const fs = require('fs');
 const process = require('process');
+const path = require('path');
 
 const Logger = require('./logger-util');
 
@@ -30,6 +31,7 @@ class EnterpriseUtil {
 			enterpriseJsonPath = '/etc/zulip-desktop-config/enterprise_config.json';
 		}
 		try {
+			enterpriseJsonPath = path.resolve(enterpriseJsonPath);
 			const file = fs.readFileSync(enterpriseJsonPath, 'utf8');
 			this.enterpriseSettings = JSON.parse(file);
 		} catch (err) {
