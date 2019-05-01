@@ -5,6 +5,7 @@ const path = require('path');
 const process = require('process');
 const JsonDB = require('node-json-db');
 const Logger = require('./logger-util');
+const EnterpriseUtil = require('./enterprise-util');
 
 const logger = new Logger({
 	file: 'config-util.log',
@@ -65,9 +66,11 @@ class ConfigUtil {
 		return (value !== undefined);
 	}
 
-	setConfigItem(key, value) {
-		this.db.push(`/${key}`, value, true);
-		this.db.save();
+	setConfigItem(key, value, override = false) {
+		if (!EnterpriseUtil.isAdminOnly(key) || override) {
+			this.db.push(`/${key}`, value, true);
+			this.db.save();
+		}
 	}
 
 	removeConfigItem(key) {

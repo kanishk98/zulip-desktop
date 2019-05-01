@@ -16,6 +16,7 @@ const DNDUtil = require(__dirname + '/js/utils/dnd-util.js');
 const ReconnectUtil = require(__dirname + '/js/utils/reconnect-util.js');
 const Logger = require(__dirname + '/js/utils/logger-util.js');
 const CommonUtil = require(__dirname + '/js/utils/common-util.js');
+const EnterpriseUtil = require(__dirname + '/js/utils/enterprise-util.js');
 
 const { feedbackHolder } = require(__dirname + '/js/feedback.js');
 
@@ -141,9 +142,14 @@ class ServerManagerView {
 			settingOptions.autoHideMenubar = false;
 		}
 
-		for (const i in settingOptions) {
-			if (ConfigUtil.getConfigItem(i) === null) {
-				ConfigUtil.setConfigItem(i, settingOptions[i]);
+		for (const setting in settingOptions) {
+			if (ConfigUtil.getConfigItem(setting) === null || EnterpriseUtil.isAdminOnly(setting)) {
+				// give preference to defaults defined in enterprise_config.json
+				if (EnterpriseUtil.configItemExists(setting)) {
+					ConfigUtil.setConfigItem(setting, EnterpriseUtil.getConfigItem(setting), true);
+				} else {
+					ConfigUtil.setConfigItem(setting, settingOptions[setting]);
+				}
 			}
 		}
 	}
