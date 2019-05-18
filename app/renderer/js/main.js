@@ -161,9 +161,10 @@ class ServerManagerView {
 	}
 
 	async initPresetOrgs() {
+		const preAddedDomains = DomainUtil.getDomains();
 		const presetOrgs = EnterpriseUtil.getConfigItem('presetOrganizations', []);
 		// set to true if at least one new domain is added
-		let domainAdded = false;
+		let domainsAdded = 0;
 		for (const url in presetOrgs) {
 			if (DomainUtil.duplicateDomain(presetOrgs[url])) {
 				continue;
@@ -174,7 +175,7 @@ class ServerManagerView {
 				try {
 					// eslint-disable-next-line no-await-in-loop
 					await DomainUtil.addDomain(serverConf);
-					domainAdded = true;
+					domainsAdded++;
 				} catch (err) {
 					logger.error(err);
 					logger.error('Could not add ' + presetOrgs[url] + '. Please contact your system administrator.');
@@ -184,8 +185,23 @@ class ServerManagerView {
 				continue;
 			}
 		}
-		if (domainAdded) {
-			ipcRenderer.send('reload-full-app');
+		if (domainsAdded > 0) {
+			if (preAddedDomains.length > 0) {
+				// user already has servers added
+				// ask them before reloading the app
+				dialog.showMessageBox({
+					type: 'question',
+					buttons: ['Yes', 'Later'],
+					defaultId: 0,
+					message: 'New server' + (domainsAdded > 1 ? 's' : '') + ' added. Reload app now?'
+				}, response => {
+					if (response === 0) {
+						ipcRenderer.send('reload-full-app');
+					}
+				});
+			} else {
+				ipcRenderer.send('reload-full-app');
+			}
 		}
 	}
 
