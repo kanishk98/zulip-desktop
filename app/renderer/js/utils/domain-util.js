@@ -89,8 +89,8 @@ class DomainUtil {
 		return true;
 	}
 
-	removeDomain(index) {
-		if (EnterpriseUtil.isAdminOnly('presetOrganizations')) {
+	removeDomain(index, override = false) {
+		if (EnterpriseUtil.isAdminOnly('presetOrganizations') && !override) {
 			return false;
 		}
 		this.db.delete(`/domains[${index}]`);

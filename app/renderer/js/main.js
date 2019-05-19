@@ -203,6 +203,16 @@ class ServerManagerView {
 				ipcRenderer.send('reload-full-app');
 			}
 		}
+
+		// if isAdminOnly is set, then no organizations not in enterprise config should be allowed
+		if (EnterpriseUtil.isAdminOnly('presetOrganizations')) {
+			for (const domain in preAddedDomains) {
+				if (presetOrgs.indexOf(preAddedDomains[domain].url) === -1) {
+					// domain violates enterprise config
+					DomainUtil.removeDomain(domain, true);
+				}
+			}
+		}
 	}
 
 	initTabs() {
