@@ -89,6 +89,7 @@ class NetworkSection extends BaseSection {
 		this.generateSettingOption({
 			$element: document.querySelector('#use-system-settings .setting-control'),
 			value: ConfigUtil.getConfigItem('useSystemProxy', false),
+			key: 'useSystemProxy',
 			clickHandler: () => {
 				const newValue = !ConfigUtil.getConfigItem('useSystemProxy');
 				const manualProxyValue = ConfigUtil.getConfigItem('useManualProxy');
@@ -108,6 +109,7 @@ class NetworkSection extends BaseSection {
 		this.generateSettingOption({
 			$element: document.querySelector('#use-manual-settings .setting-control'),
 			value: ConfigUtil.getConfigItem('useManualProxy', false),
+			key: 'useManualProxy',
 			clickHandler: () => {
 				const newValue = !ConfigUtil.getConfigItem('useManualProxy');
 				const systemProxyValue = ConfigUtil.getConfigItem('useSystemProxy');

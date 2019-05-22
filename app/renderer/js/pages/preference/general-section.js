@@ -172,6 +172,7 @@ class GeneralSection extends BaseSection {
 		this.generateSettingOption({
 			$element: document.querySelector('#tray-option .setting-control'),
 			value: ConfigUtil.getConfigItem('trayIcon', true),
+			key: 'trayIcon',
 			clickHandler: () => {
 				const newValue = !ConfigUtil.getConfigItem('trayIcon');
 				ConfigUtil.setConfigItem('trayIcon', newValue);
@@ -185,6 +186,7 @@ class GeneralSection extends BaseSection {
 		this.generateSettingOption({
 			$element: document.querySelector('#menubar-option .setting-control'),
 			value: ConfigUtil.getConfigItem('autoHideMenubar', false),
+			key: 'autoHideMenubar',
 			clickHandler: () => {
 				const newValue = !ConfigUtil.getConfigItem('autoHideMenubar');
 				ConfigUtil.setConfigItem('autoHideMenubar', newValue);
@@ -198,6 +200,7 @@ class GeneralSection extends BaseSection {
 		this.generateSettingOption({
 			$element: document.querySelector('#badge-option .setting-control'),
 			value: ConfigUtil.getConfigItem('badgeOption', true),
+			key: 'badgeOption',
 			clickHandler: () => {
 				const newValue = !ConfigUtil.getConfigItem('badgeOption');
 				ConfigUtil.setConfigItem('badgeOption', newValue);
@@ -211,6 +214,7 @@ class GeneralSection extends BaseSection {
 		this.generateSettingOption({
 			$element: document.querySelector('#dock-bounce-option .setting-control'),
 			value: ConfigUtil.getConfigItem('dockBouncing', true),
+			key: 'dockBouncing',
 			clickHandler: () => {
 				const newValue = !ConfigUtil.getConfigItem('dockBouncing');
 				ConfigUtil.setConfigItem('dockBouncing', newValue);
@@ -223,6 +227,7 @@ class GeneralSection extends BaseSection {
 		this.generateSettingOption({
 			$element: document.querySelector('#flash-taskbar-option .setting-control'),
 			value: ConfigUtil.getConfigItem('flashTaskbarOnMessage', true),
+			key: 'flashTaskbarOnMessage',
 			clickHandler: () => {
 				const newValue = !ConfigUtil.getConfigItem('flashTaskbarOnMessage');
 				ConfigUtil.setConfigItem('flashTaskbarOnMessage', newValue);
@@ -235,6 +240,7 @@ class GeneralSection extends BaseSection {
 		this.generateSettingOption({
 			$element: document.querySelector('#autoupdate-option .setting-control'),
 			value: ConfigUtil.getConfigItem('autoUpdate', true),
+			key: 'autoUpdate',
 			clickHandler: () => {
 				const newValue = !ConfigUtil.getConfigItem('autoUpdate');
 				ConfigUtil.setConfigItem('autoUpdate', newValue);
@@ -251,6 +257,7 @@ class GeneralSection extends BaseSection {
 		this.generateSettingOption({
 			$element: document.querySelector('#betaupdate-option .setting-control'),
 			value: ConfigUtil.getConfigItem('betaUpdate', false),
+			key: 'betaUpdate',
 			clickHandler: () => {
 				const newValue = !ConfigUtil.getConfigItem('betaUpdate');
 				if (ConfigUtil.getConfigItem('autoUpdate')) {
@@ -265,6 +272,7 @@ class GeneralSection extends BaseSection {
 		this.generateSettingOption({
 			$element: document.querySelector('#silent-option .setting-control'),
 			value: ConfigUtil.getConfigItem('silent', false),
+			key: 'silent',
 			clickHandler: () => {
 				const newValue = !ConfigUtil.getConfigItem('silent', true);
 				ConfigUtil.setConfigItem('silent', newValue);
@@ -278,6 +286,7 @@ class GeneralSection extends BaseSection {
 		this.generateSettingOption({
 			$element: document.querySelector('#show-notification-option .setting-control'),
 			value: ConfigUtil.getConfigItem('showNotification', true),
+			key: 'showNotification',
 			clickHandler: () => {
 				const newValue = !ConfigUtil.getConfigItem('showNotification', true);
 				ConfigUtil.setConfigItem('showNotification', newValue);
@@ -290,6 +299,7 @@ class GeneralSection extends BaseSection {
 		this.generateSettingOption({
 			$element: document.querySelector('#sidebar-option .setting-control'),
 			value: ConfigUtil.getConfigItem('showSidebar', true),
+			key: 'showSidebar',
 			clickHandler: () => {
 				const newValue = !ConfigUtil.getConfigItem('showSidebar');
 				ConfigUtil.setConfigItem('showSidebar', newValue);
@@ -303,6 +313,7 @@ class GeneralSection extends BaseSection {
 		this.generateSettingOption({
 			$element: document.querySelector('#startAtLogin-option .setting-control'),
 			value: ConfigUtil.getConfigItem('startAtLogin', false),
+			key: 'startAtLogin',
 			clickHandler: () => {
 				const newValue = !ConfigUtil.getConfigItem('startAtLogin');
 				ConfigUtil.setConfigItem('startAtLogin', newValue);
@@ -316,6 +327,7 @@ class GeneralSection extends BaseSection {
 		this.generateSettingOption({
 			$element: document.querySelector('#enable-spellchecker-option .setting-control'),
 			value: ConfigUtil.getConfigItem('enableSpellchecker', true),
+			key: 'enableSpellchecker',
 			clickHandler: () => {
 				const newValue = !ConfigUtil.getConfigItem('enableSpellchecker');
 				ConfigUtil.setConfigItem('enableSpellchecker', newValue);
@@ -328,6 +340,7 @@ class GeneralSection extends BaseSection {
 		this.generateSettingOption({
 			$element: document.querySelector('#enable-error-reporting .setting-control'),
 			value: ConfigUtil.getConfigItem('errorReporting', true),
+			key: 'errorReporting',
 			clickHandler: () => {
 				const newValue = !ConfigUtil.getConfigItem('errorReporting');
 				ConfigUtil.setConfigItem('errorReporting', newValue);
@@ -381,6 +394,7 @@ class GeneralSection extends BaseSection {
 		this.generateSettingOption({
 			$element: document.querySelector('#start-minimize-option .setting-control'),
 			value: ConfigUtil.getConfigItem('startMinimized', false),
+			key: 'startMinimized',
 			clickHandler: () => {
 				const newValue = !ConfigUtil.getConfigItem('startMinimized');
 				ConfigUtil.setConfigItem('startMinimized', newValue);
@@ -437,6 +451,7 @@ class GeneralSection extends BaseSection {
 		this.generateSettingOption({
 			$element: document.querySelector('#show-download-folder .setting-control'),
 			value: ConfigUtil.getConfigItem('showDownloadFolder', false),
+			key: 'showDownloadFolder',
 			clickHandler: () => {
 				const newValue = !ConfigUtil.getConfigItem('showDownloadFolder');
 				ConfigUtil.setConfigItem('showDownloadFolder', newValue);
