@@ -52,6 +52,7 @@ class ServerManagerView {
 
 		this.activeTabIndex = -1;
 		this.tabs = [];
+		this.presetOrgs = [];
 		this.functionalTabs = {};
 		this.tabIndex = 0;
 	}
@@ -174,12 +175,12 @@ class ServerManagerView {
 
 	async initPresetOrgs() {
 		const preAddedDomains = DomainUtil.getDomains();
-		const presetOrgs = EnterpriseUtil.getConfigItem('presetOrganizations', []);
+		this.presetOrgs = EnterpriseUtil.getConfigItem('presetOrganizations', []);
 
 		// if isAdminOnly is set, then no organizations not in enterprise config should be allowed
 		if (EnterpriseUtil.isAdminOnly('presetOrganizations')) {
 			for (const domain in preAddedDomains) {
-				if (presetOrgs.indexOf(preAddedDomains[domain].url) === -1) {
+				if (this.presetOrgs.indexOf(preAddedDomains[domain].url) === -1) {
 					// domain violates enterprise config
 					DomainUtil.removeDomain(domain, true);
 				}
@@ -188,11 +189,11 @@ class ServerManagerView {
 
 		// set to true if at least one new domain is added
 		const domainPromises = [];
-		for (const url in presetOrgs) {
-			if (DomainUtil.duplicateDomain(presetOrgs[url])) {
+		for (const url in this.presetOrgs) {
+			if (DomainUtil.duplicateDomain(this.presetOrgs[url])) {
 				continue;
 			}
-			domainPromises.push(this.queueDomain(presetOrgs[url]));
+			domainPromises.push(this.queueDomain(this.presetOrgs[url]));
 		}
 		const domainsAdded = await Promise.all(domainPromises);
 		if (domainsAdded.includes(true)) {
@@ -218,7 +219,7 @@ class ServerManagerView {
 		// if isAdminOnly is set, then no organizations not in enterprise config should be allowed
 		if (EnterpriseUtil.isAdminOnly('presetOrganizations')) {
 			for (const domain in preAddedDomains) {
-				if (presetOrgs.indexOf(preAddedDomains[domain].url) === -1) {
+				if (this.presetOrgs.indexOf(preAddedDomains[domain].url) === -1) {
 					// domain violates enterprise config
 					DomainUtil.removeDomain(domain, true);
 				}
@@ -238,7 +239,8 @@ class ServerManagerView {
 			this.activateTab(ConfigUtil.getConfigItem('lastActiveTab'));
 			// Remove focus from the settings icon at sidebar bottom
 			this.$settingsButton.classList.remove('active');
-		} else {
+		} else if (this.presetOrgs.length === 0) {
+			// not attempting to add organisations in background
 			this.openSettings('AddServer');
 		}
 	}
