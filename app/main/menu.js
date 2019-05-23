@@ -10,6 +10,7 @@ const { appUpdater } = require('./autoupdater');
 const ConfigUtil = require(__dirname + '/../renderer/js/utils/config-util.js');
 const DNDUtil = require(__dirname + '/../renderer/js/utils/dnd-util.js');
 const Logger = require(__dirname + '/../renderer/js/utils/logger-util.js');
+const EnterpriseUtil = require(__dirname + '/../renderer/js/utils/enterprise-util.js');
 
 const appName = app.getName();
 
@@ -42,6 +43,7 @@ class AppMenu {
 	getToolsSubmenu() {
 		return [{
 			label: `Check for Updates`,
+			enabled: !EnterpriseUtil.isAdminOnly('autoUpdate'),
 			click() {
 				AppMenu.checkForUpdate();
 			}
@@ -147,6 +149,7 @@ class AppMenu {
 			type: 'separator'
 		}, {
 			label: 'Toggle Tray Icon',
+			enabled: !EnterpriseUtil.isAdminOnly('trayIcon'),
 			click(item, focusedWindow) {
 				if (focusedWindow) {
 					focusedWindow.webContents.send('toggletray');
@@ -155,6 +158,7 @@ class AppMenu {
 		}, {
 			label: 'Toggle Sidebar',
 			accelerator: 'CommandOrControl+Shift+S',
+			enabled: !EnterpriseUtil.isAdminOnly('showSidebar'),
 			click(item, focusedWindow) {
 				if (focusedWindow) {
 					const newValue = !ConfigUtil.getConfigItem('showSidebar');
