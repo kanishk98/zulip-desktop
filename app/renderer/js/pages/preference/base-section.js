@@ -16,6 +16,18 @@ class BaseSection extends BaseComponent {
 		$optionControl.addEventListener('click', clickHandler);
 	}
 
+	generateSettingDropdown(props) {
+		const {$element, value, options, clickHandler} = props;
+
+		$element.innerHTML = '';
+
+		for (const option in options) {
+			const $optionLang = this.generateNodeFromTemplate(this.generateDropdownOption(options[option], value));
+			$element.appendChild($optionLang);
+		}
+		$element.addEventListener('change', clickHandler);
+	}
+
 	generateOptionTemplate(settingOption) {
 		if (settingOption) {
 			return `
@@ -36,6 +48,14 @@ class BaseSection extends BaseComponent {
 				</div>
 			`;
 		}
+	}
+
+	generateDropdownOption(dropdownOption, value) {
+		return `
+			<option class='dropdown-option ${dropdownOption === value ? `selected' selected` : ''}' ${dropdownOption === value ? 'selected' : ''}>
+				<button>${dropdownOption}</button>
+			</div>
+		`;
 	}
 
 	reloadApp() {

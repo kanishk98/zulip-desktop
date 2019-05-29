@@ -8,6 +8,8 @@ const currentBrowserWindow = remote.getCurrentWindow();
 const BaseSection = require(__dirname + '/base-section.js');
 const ConfigUtil = require(__dirname + '/../../utils/config-util.js');
 
+const locales = require(__dirname + '/../../../../resources/spellcheck/locales.json');
+
 class GeneralSection extends BaseSection {
 	constructor(props) {
 		super();
@@ -87,6 +89,10 @@ class GeneralSection extends BaseSection {
 						<div class="setting-description">Use organisation language</div>
 						<div class="setting-control"></div>
 					</div>
+					<div class="setting-row" id="spellchecker-language-dropdown">
+						<div class="setting-description">Choose spellchecker language</div>
+						<select class="custom-css-button green"></select>
+					</div>
 				</div>
 				<div class="title">Advanced</div>
 				<div class="settings-card">
@@ -151,6 +157,7 @@ class GeneralSection extends BaseSection {
 		this.showDesktopNotification();
 		this.enableSpellchecker();
 		this.useServerLanguage();
+		this.chooseSpellcheckerLanguage();
 		this.minimizeOnStart();
 		this.addCustomCSS();
 		this.showCustomCSSPath();
@@ -340,6 +347,18 @@ class GeneralSection extends BaseSection {
 				const newValue = !ConfigUtil.getConfigItem('useServerLanguage');
 				ConfigUtil.setConfigItem('useServerLanguage', newValue);
 				this.useServerLanguage();
+			}
+		});
+	}
+
+	chooseSpellcheckerLanguage() {
+		this.generateSettingDropdown({
+			$element: document.querySelector('#spellchecker-language-dropdown .custom-css-button'),
+			value: ConfigUtil.getConfigItem('spellcheckerLanguage', 'en-US'),
+			options: locales,
+			clickHandler: ({target}) => {
+				ConfigUtil.setConfigItem('spellcheckerLanguage', target.value);
+				this.chooseSpellcheckerLanguage();
 			}
 		});
 	}
