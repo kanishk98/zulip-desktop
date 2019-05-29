@@ -76,8 +76,15 @@ class GeneralSection extends BaseSection {
 						<div class="setting-description">Always start minimized</div>
 						<div class="setting-control"></div>
 					</div>
+				</div>
+				<div class="title">Spellchecker (requires app restart)</div>
+				<div class="settings-card">
 					<div class="setting-row" id="enable-spellchecker-option">
-						<div class="setting-description">Enable spellchecker (requires restart)</div>
+						<div class="setting-description">Enable spellchecker (language is auto-detected by default)</div>
+						<div class="setting-control"></div>
+					</div>
+					<div class="setting-row" id="use-server-language">
+						<div class="setting-description">Use organisation language</div>
 						<div class="setting-control"></div>
 					</div>
 				</div>
@@ -143,6 +150,7 @@ class GeneralSection extends BaseSection {
 		this.updateResetDataOption();
 		this.showDesktopNotification();
 		this.enableSpellchecker();
+		this.useServerLanguage();
 		this.minimizeOnStart();
 		this.addCustomCSS();
 		this.showCustomCSSPath();
@@ -320,6 +328,18 @@ class GeneralSection extends BaseSection {
 				const newValue = !ConfigUtil.getConfigItem('enableSpellchecker');
 				ConfigUtil.setConfigItem('enableSpellchecker', newValue);
 				this.enableSpellchecker();
+			}
+		});
+	}
+
+	useServerLanguage() {
+		this.generateSettingOption({
+			$element: document.querySelector('#use-server-language .setting-control'),
+			value: ConfigUtil.getConfigItem('useServerLanguage', false),
+			clickHandler: () => {
+				const newValue = !ConfigUtil.getConfigItem('useServerLanguage');
+				ConfigUtil.setConfigItem('useServerLanguage', newValue);
+				this.useServerLanguage();
 			}
 		});
 	}
