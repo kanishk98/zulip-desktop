@@ -7,6 +7,8 @@ const ConfigUtil = require(__dirname + '/utils/config-util.js');
 const LinkUtil = require(__dirname + '/utils/link-util.js');
 const params = require(__dirname + '/utils/params-util.js');
 
+const normalizedLocales = require(__dirname + '/../../resources/spellcheck/normalized-locales.json');
+
 // eslint-disable-next-line import/no-unassigned-import
 require('./notification');
 
@@ -47,8 +49,8 @@ document.addEventListener('DOMContentLoaded', () => {
 	// Get the default language of the server
 		const serverLanguage = page_params.default_language; // eslint-disable-line no-undef, camelcase
 		if (serverLanguage) {
-			// Set spellcheker language
-			ConfigUtil.setConfigItem('spellcheckerLanguage', serverLanguage);
+			// Set spellchecker language
+			ConfigUtil.setConfigItem('spellcheckerLanguage', normalizedLocales[serverLanguage]);
 			// Init spellchecker
 			SetupSpellChecker.init();
 		}
