@@ -30,9 +30,9 @@ class SetupSpellChecker {
 		if (this.SpellCheckHandler) {
 			this.SpellCheckHandler.attachToInput();
 
-			const userLanguage = ConfigUtil.getConfigItem('spellcheckerLanguage');
-
-			this.SpellCheckHandler.switchLanguage(userLanguage);
+			this.SpellCheckHandler.currentSpellcheckerChanged.subscribe(() => {
+				this.SpellCheckHandler.switchLanguage(this.SpellCheckHandler.currentSpellcheckerLanguage);
+			});
 		}
 
 		const contextMenuBuilder = new ContextMenuBuilder(this.SpellCheckHandler);
