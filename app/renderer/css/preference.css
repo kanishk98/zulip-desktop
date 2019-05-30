@@ -505,6 +505,15 @@ input.toggle-round:checked + label::after {
     background-color: rgba(78, 191, 172, 1.000);
     color: rgba(255, 255, 255, 1.000);
 }
+
+.turned-off {
+    background-color: rgba(241, 241, 241, 1.000);
+}
+
+.disallowed:hover {
+    background-color: rgba(241, 241, 241, 1.000);
+    cursor: not-allowed;
+}
 /*  Add new server modal */
 
 .add-server-modal {

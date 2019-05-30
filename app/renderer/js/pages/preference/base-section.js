@@ -6,18 +6,18 @@ const BaseComponent = require(__dirname + '/../../components/base.js');
 
 class BaseSection extends BaseComponent {
 	generateSettingOption(props) {
-		const {$element, value, clickHandler} = props;
+		const { $element, disabled, value, clickHandler } = props;
 
 		$element.innerHTML = '';
 
-		const $optionControl = this.generateNodeFromTemplate(this.generateOptionTemplate(value));
+		const $optionControl = this.generateNodeFromTemplate(this.generateOptionTemplate(value, disabled));
 		$element.appendChild($optionControl);
 
 		$optionControl.addEventListener('click', clickHandler);
 	}
 
 	generateSettingDropdown(props) {
-		const {$element, value, options, clickHandler} = props;
+		const { $element, disabled, value, options, clickHandler } = props;
 
 		$element.innerHTML = '';
 
@@ -26,15 +26,39 @@ class BaseSection extends BaseComponent {
 			$element.appendChild($optionLang);
 		}
 		$element.addEventListener('change', clickHandler);
+		switch (disabled()) {
+			case null:
+				$element.removeAttribute('disabled');
+				$element.classList.remove('turned-off', 'disallowed');
+				break;
+			case 'soft':
+				$element.removeAttribute('disabled');
+				$element.classList.remove('disallowed');
+				$element.classList.add('turned-off');
+				break;
+			case 'hard':
+				$element.classList.add('turned-off', 'disallowed');
+				$element.setAttribute('disabled', true);
+				break;
+			default:
+		}
 	}
 
-	generateOptionTemplate(settingOption) {
+	generateSwitchLabel(disabled) {
+		if (disabled) {
+			return `<label class="disallowed"/>`;
+		}
+		return `<label/>`;
+	}
+
+	generateOptionTemplate(settingOption, disabled) {
+		const label = this.generateSwitchLabel(disabled);
 		if (settingOption) {
 			return `
 				<div class="action">
 					<div class="switch">
 					  <input class="toggle toggle-round" type="checkbox" checked>
-					  <label></label>
+					  ${label}
 					</div>
 				</div>
 			`;
@@ -43,7 +67,7 @@ class BaseSection extends BaseComponent {
 				<div class="action">
 					<div class="switch">
 					  <input class="toggle toggle-round" type="checkbox">
-					  <label></label>
+					  ${label}
 					</div>
 				</div>
 			`;

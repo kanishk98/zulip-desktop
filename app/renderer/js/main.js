@@ -108,6 +108,7 @@ class ServerManagerView {
 			startAtLogin: true,
 			startMinimized: false,
 			enableSpellchecker: true,
+			useCustomLanguage: false,
 			useServerLanguage: false,
 			showNotification: true,
 			autoUpdate: true,

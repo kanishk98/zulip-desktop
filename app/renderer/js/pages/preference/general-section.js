@@ -334,6 +334,13 @@ class GeneralSection extends BaseSection {
 			clickHandler: () => {
 				const newValue = !ConfigUtil.getConfigItem('enableSpellchecker');
 				ConfigUtil.setConfigItem('enableSpellchecker', newValue);
+				if (!newValue) {
+					// grey out spellchecker settings
+					ConfigUtil.setConfigItem('useServerLanguage', false);
+					ConfigUtil.setConfigItem('useCustomLanguage', false);
+				}
+				this.useServerLanguage();
+				this.chooseSpellcheckerLanguage();
 				this.enableSpellchecker();
 			}
 		});
@@ -343,9 +350,14 @@ class GeneralSection extends BaseSection {
 		this.generateSettingOption({
 			$element: document.querySelector('#use-server-language .setting-control'),
 			value: ConfigUtil.getConfigItem('useServerLanguage', false),
+			disabled: !ConfigUtil.getConfigItem('enableSpellchecker', true),
 			clickHandler: () => {
 				const newValue = !ConfigUtil.getConfigItem('useServerLanguage');
 				ConfigUtil.setConfigItem('useServerLanguage', newValue);
+				if (newValue) {
+					ConfigUtil.setConfigItem('useCustomLanguage', false);
+				}
+				this.chooseSpellcheckerLanguage();
 				this.useServerLanguage();
 			}
 		});
@@ -354,10 +366,22 @@ class GeneralSection extends BaseSection {
 	chooseSpellcheckerLanguage() {
 		this.generateSettingDropdown({
 			$element: document.querySelector('#spellchecker-language-dropdown .custom-css-button'),
+			disabled: () => {
+				if (ConfigUtil.getConfigItem('enableSpellchecker', true) && ConfigUtil.getConfigItem('useCustomLanguage', false)) {
+					return null;
+				} else if (ConfigUtil.getConfigItem('enableSpellchecker', true)) {
+					return 'soft';
+				} else {
+					return 'hard';
+				}
+			},
 			value: ConfigUtil.getConfigItem('spellcheckerLanguage', 'en-US'),
 			options: locales,
 			clickHandler: ({target}) => {
+				ConfigUtil.setConfigItem('useCustomLanguage', true);
+				ConfigUtil.setConfigItem('useServerLanguage', false);
 				ConfigUtil.setConfigItem('spellcheckerLanguage', target.value);
+				this.useServerLanguage();
 				this.chooseSpellcheckerLanguage();
 			}
 		});
