@@ -11,11 +11,11 @@ const logger = new Logger({
 });
 
 class SetupSpellChecker {
-	init() {
+	init(serverLanguage) {
 		if (ConfigUtil.getConfigItem('enableSpellchecker')) {
 			this.enableSpellChecker();
 		}
-		this.enableContextMenu();
+		this.enableContextMenu(serverLanguage);
 	}
 
 	enableSpellChecker() {
@@ -26,13 +26,24 @@ class SetupSpellChecker {
 		}
 	}
 
-	enableContextMenu() {
+	enableContextMenu(serverLanguage) {
 		if (this.SpellCheckHandler) {
 			this.SpellCheckHandler.attachToInput();
-
-			this.SpellCheckHandler.currentSpellcheckerChanged.subscribe(() => {
-				this.SpellCheckHandler.switchLanguage(this.SpellCheckHandler.currentSpellcheckerLanguage);
-			});
+			const useCustomLanguage = ConfigUtil.getConfigItem('useCustomLanguage', false);
+			const useServerLanguage = ConfigUtil.getConfigItem('useServerLanguage', false);
+			if (useCustomLanguage) {
+				this.SpellCheckHandler.currentSpellcheckerChanged.subscribe(() => {
+					this.SpellCheckHandler.switchLanguage(ConfigUtil.getConfigItem('spellcheckerLanguage', 'en-US'));
+				});
+			} else if (useServerLanguage && serverLanguage) {
+				this.SpellCheckHandler.currentSpellcheckerChanged.subscribe(() => {
+					this.SpellCheckHandler.switchLanguage(serverLanguage);
+				});
+			} else {
+				this.SpellCheckHandler.currentSpellcheckerChanged.subscribe(() => {
+					this.SpellCheckHandler.switchLanguage(this.SpellCheckHandler.currentSpellcheckerLanguage);
+				});
+			}
 		}
 
 		const contextMenuBuilder = new ContextMenuBuilder(this.SpellCheckHandler);

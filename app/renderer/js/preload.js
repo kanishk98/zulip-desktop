@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			// Set spellchecker language
 			ConfigUtil.setConfigItem('spellcheckerLanguage', normalizedLocales[serverLanguage]);
 			// Init spellchecker
-			SetupSpellChecker.init();
+			SetupSpellChecker.init(normalizedLocales[serverLanguage]);
 		}
 		// redirect users to network troubleshooting page
 		const getRestartButton = document.querySelector('.restart_get_events_button');
