@@ -22,6 +22,10 @@ class BaseSection extends BaseComponent {
 		$element.innerHTML = '';
 
 		for (const option in options) {
+			if (!options[option]) {
+				// language not identified by locale-code
+				continue;
+			}
 			const $optionLang = this.generateNodeFromTemplate(this.generateDropdownOption(options[option], value));
 			$element.appendChild($optionLang);
 		}

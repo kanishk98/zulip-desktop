@@ -375,12 +375,12 @@ class GeneralSection extends BaseSection {
 					return 'hard';
 				}
 			},
-			value: ConfigUtil.getConfigItem('spellcheckerLanguage', 'en-US'),
-			options: locales,
+			value: locales.names[ConfigUtil.getConfigItem('spellcheckerLanguage', 'en-US')],
+			options: locales.array.map(locale => locales.names[locale]).sort(),
 			clickHandler: ({target}) => {
 				ConfigUtil.setConfigItem('useCustomLanguage', true);
 				ConfigUtil.setConfigItem('useServerLanguage', false);
-				ConfigUtil.setConfigItem('spellcheckerLanguage', target.value);
+				ConfigUtil.setConfigItem('spellcheckerLanguage', locales.codes[target.value]);
 				this.useServerLanguage();
 				this.chooseSpellcheckerLanguage();
 			}
