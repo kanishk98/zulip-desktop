@@ -343,15 +343,7 @@ class GeneralSection extends BaseSection {
 	chooseSpellcheckerLanguage() {
 		this.generateSettingDropdown({
 			$element: document.querySelector('#spellchecker-language-dropdown .custom-css-button'),
-			disabled: () => {
-				if (ConfigUtil.getConfigItem('enableSpellchecker', true) && ConfigUtil.getConfigItem('useCustomLanguage', false)) {
-					return null;
-				} else if (ConfigUtil.getConfigItem('enableSpellchecker', true)) {
-					return 'soft';
-				} else {
-					return 'hard';
-				}
-			},
+			enabled: ConfigUtil.getConfigItem('enableSpellchecker', true),
 			value: locales.names[ConfigUtil.getConfigItem('spellcheckerLanguage', 'en-US')],
 			options: locales.array.map(locale => locales.names[locale]),
 			clickHandler: ({target}) => {

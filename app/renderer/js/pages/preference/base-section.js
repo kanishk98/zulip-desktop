@@ -17,7 +17,7 @@ class BaseSection extends BaseComponent {
 	}
 
 	generateSettingDropdown(props) {
-		const { $element, disabled, value, options, clickHandler } = props;
+		const { $element, enabled, value, options, clickHandler } = props;
 
 		$element.innerHTML = '';
 
@@ -30,21 +30,12 @@ class BaseSection extends BaseComponent {
 			$element.appendChild($optionLang);
 		}
 		$element.addEventListener('change', clickHandler);
-		switch (disabled()) {
-			case null:
-				$element.removeAttribute('disabled');
-				$element.classList.remove('turned-off', 'disallowed');
-				break;
-			case 'soft':
-				$element.removeAttribute('disabled');
-				$element.classList.remove('disallowed');
-				$element.classList.add('turned-off');
-				break;
-			case 'hard':
-				$element.classList.add('turned-off', 'disallowed');
-				$element.setAttribute('disabled', true);
-				break;
-			default:
+		if (enabled) {
+			$element.removeAttribute('disabled');
+			$element.classList.remove('turned-off', 'disallowed');
+		} else {
+			$element.setAttribute('disabled', true);
+			$element.classList.add('turned-off', 'disallowed');
 		}
 	}
 
