@@ -1,5 +1,7 @@
 {
     "names": {
+        "auto": "Detect automatically",
+        "org": "Use organization language",
         "af": "Afrikaans",
         "af-ZA": "Afrikaans (South Africa)",
         "am": "Amharic",
@@ -431,6 +433,8 @@
         "zu-ZA": "isiZulu (South Africa)"
     },
     "codes": {
+        "Detect automatically": "auto",
+        "Use organization language": "org",
         "Afrikaans": "af",
         "Afrikaans (South Africa)": "af-ZA",
         "Amharic": "am",
@@ -860,6 +864,8 @@
         "isiZulu (South Africa)": "zu-ZA"
     },
     "array": [
+        "auto",
+        "org",
         "af-ZA",
         "am-ET",
         "ar-AE",

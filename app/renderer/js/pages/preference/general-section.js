@@ -85,10 +85,6 @@ class GeneralSection extends BaseSection {
 						<div class="setting-description">Enable spellchecker (language is auto-detected by default)</div>
 						<div class="setting-control"></div>
 					</div>
-					<div class="setting-row" id="use-server-language">
-						<div class="setting-description">Use organisation language</div>
-						<div class="setting-control"></div>
-					</div>
 					<div class="setting-row" id="spellchecker-language-dropdown">
 						<div class="setting-description">Choose spellchecker language</div>
 						<select class="custom-css-button green"></select>
@@ -156,7 +152,6 @@ class GeneralSection extends BaseSection {
 		this.updateResetDataOption();
 		this.showDesktopNotification();
 		this.enableSpellchecker();
-		this.useServerLanguage();
 		this.chooseSpellcheckerLanguage();
 		this.minimizeOnStart();
 		this.addCustomCSS();
@@ -339,26 +334,8 @@ class GeneralSection extends BaseSection {
 					ConfigUtil.setConfigItem('useServerLanguage', false);
 					ConfigUtil.setConfigItem('useCustomLanguage', false);
 				}
-				this.useServerLanguage();
 				this.chooseSpellcheckerLanguage();
 				this.enableSpellchecker();
-			}
-		});
-	}
-
-	useServerLanguage() {
-		this.generateSettingOption({
-			$element: document.querySelector('#use-server-language .setting-control'),
-			value: ConfigUtil.getConfigItem('useServerLanguage', false),
-			disabled: !ConfigUtil.getConfigItem('enableSpellchecker', true),
-			clickHandler: () => {
-				const newValue = !ConfigUtil.getConfigItem('useServerLanguage');
-				ConfigUtil.setConfigItem('useServerLanguage', newValue);
-				if (newValue) {
-					ConfigUtil.setConfigItem('useCustomLanguage', false);
-				}
-				this.chooseSpellcheckerLanguage();
-				this.useServerLanguage();
 			}
 		});
 	}
@@ -376,12 +353,20 @@ class GeneralSection extends BaseSection {
 				}
 			},
 			value: locales.names[ConfigUtil.getConfigItem('spellcheckerLanguage', 'en-US')],
-			options: locales.array.map(locale => locales.names[locale]).sort(),
+			options: locales.array.map(locale => locales.names[locale]),
 			clickHandler: ({target}) => {
-				ConfigUtil.setConfigItem('useCustomLanguage', true);
-				ConfigUtil.setConfigItem('useServerLanguage', false);
-				ConfigUtil.setConfigItem('spellcheckerLanguage', locales.codes[target.value]);
-				this.useServerLanguage();
+				const newLanguage = locales.codes[target.value];
+				if (newLanguage === 'auto') {
+					ConfigUtil.setConfigItem('useCustomLanguage', false);
+					ConfigUtil.setConfigItem('useServerLanguage', false);
+				} else if (newLanguage === 'org') {
+					ConfigUtil.setConfigItem('useCustomLanguage', false);
+					ConfigUtil.setConfigItem('useServerLanguage', true);
+				} else {
+					ConfigUtil.setConfigItem('useCustomLanguage', true);
+					ConfigUtil.setConfigItem('useServerLanguage', false);
+				}
+				ConfigUtil.setConfigItem('spellcheckerLanguage', newLanguage);
 				this.chooseSpellcheckerLanguage();
 			}
 		});
