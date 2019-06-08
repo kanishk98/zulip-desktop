@@ -495,6 +495,10 @@ input.toggle-round:checked + label::after {
     margin-left: 25px;
 }
 
+.wide-dropdown {
+    width: 200px;
+}
+
 .dropdown-option {
     background-color: rgba(255, 255, 255, 1.000);
     color: rgba(78, 191, 172, 1.000);

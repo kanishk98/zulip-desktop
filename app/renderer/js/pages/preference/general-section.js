@@ -87,7 +87,7 @@ class GeneralSection extends BaseSection {
 					</div>
 					<div class="setting-row" id="spellchecker-language-dropdown">
 						<div class="setting-description">Choose spellchecker language</div>
-						<select class="custom-css-button green"></select>
+						<select class="custom-css-button green wide-dropdown"></select>
 					</div>
 				</div>
 				<div class="title">Advanced</div>
