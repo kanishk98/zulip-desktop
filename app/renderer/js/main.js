@@ -608,7 +608,7 @@ class ServerManagerView {
 							message: 'Are you sure you want to disconnect this organization?'
 						}, response => {
 							if (response === 0) {
-								if (EnterpriseUtil.isAdminOnly('presetOrganizations')) {
+								if (EnterpriseUtil.isAdminOnly('presetOrganizations') && this.presetOrgs.includes(DomainUtil.getDomain(index).url)) {
 									dialog.showErrorBox(
 										'Removing organizations is a restricted operation',
 										'Please contact your system administrator.'
