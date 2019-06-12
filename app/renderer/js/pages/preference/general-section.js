@@ -344,7 +344,7 @@ class GeneralSection extends BaseSection {
 		this.generateSettingDropdown({
 			$element: document.querySelector('#spellchecker-language-dropdown .custom-css-button'),
 			enabled: ConfigUtil.getConfigItem('enableSpellchecker', true),
-			value: locales.names[ConfigUtil.getConfigItem('spellcheckerLanguage', 'en-US')],
+			value: locales.names[ConfigUtil.getConfigItem('spellcheckerLanguage', 'auto')],
 			options: locales.array.map(locale => locales.names[locale]),
 			clickHandler: ({target}) => {
 				const newLanguage = locales.codes[target.value];
