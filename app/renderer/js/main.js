@@ -104,6 +104,7 @@ class ServerManagerView {
 	initDefaultSettings() {
 		// Default settings which should be respected
 		const settingOptions = {
+			autoHideMenubar: false,
 			trayIcon: true,
 			useManualProxy: false,
 			useSystemProxy: false,
@@ -530,6 +531,15 @@ class ServerManagerView {
 		ipcRenderer.send('update-badge', messageCountAll);
 	}
 
+	updateGeneralSettings(setting, value) {
+		const selector = 'webview:not([class*=disabled])';
+		const webview = document.querySelector(selector);
+		if (webview) {
+			const webContents = webview.getWebContents();
+			webContents.send(setting, value);
+		}
+	}
+
 	toggleSidebar(show) {
 		if (show) {
 			this.$sidebar.classList.remove('sidebar-hide');
@@ -639,10 +649,7 @@ class ServerManagerView {
 			this.toggleSidebar(show);
 
 			// Toggle sidebar switch in the general settings
-			const selector = 'webview:not([class*=disabled])';
-			const webview = document.querySelector(selector);
-			const webContents = webview.getWebContents();
-			webContents.send('toggle-sidebar-setting', show);
+			this.updateGeneralSettings('toggle-sidebar-setting', show);
 		});
 
 		ipcRenderer.on('toggle-silent', (event, state) => {
@@ -657,6 +664,17 @@ class ServerManagerView {
 					});
 				}
 			});
+		});
+
+		ipcRenderer.on('toggle-autohide-menubar', (event, autoHideMenubar, updateMenu) => {
+			if (updateMenu) {
+				ipcRenderer.send('update-menu', {
+					tabs: this.tabsForIpc,
+					activeTabIndex: this.activeTabIndex
+				});
+				return;
+			}
+			this.updateGeneralSettings('toggle-menubar-setting', autoHideMenubar);
 		});
 
 		ipcRenderer.on('toggle-dnd', (event, state, newSettings) => {
