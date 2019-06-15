@@ -40,6 +40,7 @@ class SetupSpellChecker {
 					this.SpellCheckHandler.switchLanguage(serverLanguage);
 				});
 			} else {
+				this.SpellCheckHandler.switchLanguage(serverLanguage);
 				this.SpellCheckHandler.currentSpellcheckerChanged.subscribe(() => {
 					this.SpellCheckHandler.switchLanguage(this.SpellCheckHandler.currentSpellcheckerLanguage);
 				});
