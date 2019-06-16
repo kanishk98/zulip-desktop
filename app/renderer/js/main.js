@@ -17,6 +17,7 @@ const ReconnectUtil = require(__dirname + '/js/utils/reconnect-util.js');
 const Logger = require(__dirname + '/js/utils/logger-util.js');
 const CommonUtil = require(__dirname + '/js/utils/common-util.js');
 const EnterpriseUtil = require(__dirname + '/js/utils/enterprise-util.js');
+const Messages = require(__dirname + '/../resources/messages.js');
 
 const { feedbackHolder } = require(__dirname + '/js/feedback.js');
 
@@ -214,6 +215,10 @@ class ServerManagerView {
 			} else {
 				ipcRenderer.send('reload-full-app');
 			}
+		} else {
+			// no enterprise domain added
+			const { title, content } = Messages.failEnterpriseOrgError(this.presetOrgs.length);
+			dialog.showErrorBox(title, content);
 		}
 
 		// if isAdminOnly is set, then no organizations not in enterprise config should be allowed
