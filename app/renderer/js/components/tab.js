@@ -25,6 +25,16 @@ class Tab extends BaseComponent {
 		this.$el.addEventListener('mouseout', this.props.onHoverOut);
 	}
 
+	updateHoverListeners(onHover, onHoverOut) {
+		if (!onHover || !onHoverOut) {
+			return;
+		}
+		this.$el.removeEventListener('mouseover', this.props.onHover);
+		this.$el.addEventListener('mouseover', onHover);
+		this.$el.removeEventListener('mouseout', this.props.onHoverOut);
+		this.$el.addEventListener('mouseout', onHoverOut);
+	}
+
 	isLoading() {
 		return this.webview.isLoading;
 	}

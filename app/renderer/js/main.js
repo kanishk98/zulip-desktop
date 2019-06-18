@@ -49,7 +49,7 @@ class ServerManagerView {
 
 		this.$sidebar = document.getElementById('sidebar');
 
-		this.$drag = document.querySelector('.simpleList');
+		this.$drag = document.querySelector('.simple-list');
 
 		this.$fullscreenPopup = document.getElementById('fullscreen-popup');
 		this.$fullscreenEscapeKey = process.platform === 'darwin' ? '^⌘F' : 'F11';
@@ -156,29 +156,39 @@ class ServerManagerView {
 		}
 	}
 
+	onEnd() {
+		const newTabs = [];
+		const tabMap = {};
+		const tabElements = document.querySelectorAll('#tabs-container .tab');
+		tabElements.forEach((el, index) => {
+			const oldIndex = Number(el.getAttribute('data-tab-id'));
+			newTabs.push(this.tabs[oldIndex]);
+			tabMap[index] = oldIndex;
+			el.setAttribute('data-tab-id', index.toString());
+		});
+
+		this.tabs = newTabs;
+
+		for (const newTab in newTabs) {
+			const onHover = newTabs[newTab].props.onHover;
+			const onHoverOut = newTabs[newTab].props.onHoverOut;
+			this.tabs[tabMap[newTab]].updateHoverListeners(onHover, onHoverOut);
+		}
+
+		ipcRenderer.send('update-menu', {
+			tabs: this.tabs,
+			activeTabIndex: this.activeTabIndex
+		});
+	}
+
 	initSidebar() {
 		const showSidebar = ConfigUtil.getConfigItem('showSidebar', true);
 		this.toggleSidebar(showSidebar);
 
 		// Allow dragging of server tabs and update the data-tab-id
-		const _this = this;
 		this.$sortable = Sortable.create(this.$drag, {
 			dataIdAttr: 'data-sortable-id',
-			onEnd() {
-				const newTabs = [];
-				const tabElements = document.querySelectorAll('#tabs-container .tab');
-				tabElements.forEach((el, index) => {
-					const oldIndex = +el.getAttribute('data-tab-id');
-					newTabs.push(_this.tabs[oldIndex]);
-					el.setAttribute('data-tab-id', index.toString());
-				});
-
-				_this.tabs = newTabs;
-				ipcRenderer.send('update-menu', {
-					tabs: _this.tabs,
-					activeTabIndex: _this.activeTabIndex
-				});
-			}
+			onEnd: this.onEnd.bind(this)
 		});
 	}
 
