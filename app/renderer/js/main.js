@@ -172,7 +172,9 @@ class ServerManagerView {
 	}
 
 	async initPresetOrgs() {
+		const preAddedDomains = DomainUtil.getDomains();
 		const presetOrgs = EnterpriseUtil.getConfigItem('presetOrganizations', []);
+
 		// set to true if at least one new domain is added
 		const domainPromises = [];
 		for (const url in presetOrgs) {
@@ -184,7 +186,22 @@ class ServerManagerView {
 		const domainsAdded = await Promise.all(domainPromises);
 		if (domainsAdded.includes(true)) {
 			// at least one domain was resolved
-			ipcRenderer.send('reload-full-app');
+			if (preAddedDomains.length > 0) {
+				// user already has servers added
+				// ask them before reloading the app
+				dialog.showMessageBox({
+					type: 'question',
+					buttons: ['Yes', 'Later'],
+					defaultId: 0,
+					message: 'New server' + (domainsAdded > 1 ? 's' : '') + ' added. Reload app now?'
+				}, response => {
+					if (response === 0) {
+						ipcRenderer.send('reload-full-app');
+					}
+				});
+			} else {
+				ipcRenderer.send('reload-full-app');
+			}
 		}
 	}
 
