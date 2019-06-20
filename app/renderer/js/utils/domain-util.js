@@ -10,6 +10,7 @@ const escape = require('escape-html');
 const Logger = require('./logger-util');
 
 const RequestUtil = require(__dirname + '/../utils/request-util.js');
+const EnterpriseUtil = require(__dirname + '/../utils/enterprise-util.js');
 const Messages = require(__dirname + '/../../../resources/messages.js');
 
 const logger = new Logger({
@@ -86,8 +87,12 @@ class DomainUtil {
 	}
 
 	removeDomain(index) {
+		if (EnterpriseUtil.isPresetOrg(this.getDomain(index).url)) {
+			return false;
+		}
 		this.db.delete(`/domains[${index}]`);
 		this.reloadDB();
+		return true;
 	}
 
 	// Check if domain is already added

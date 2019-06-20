@@ -5,6 +5,8 @@ const { ipcRenderer } = require('electron');
 const BaseComponent = require(__dirname + '/../../components/base.js');
 const DomainUtil = require(__dirname + '/../../utils/domain-util.js');
 
+const Messages = require(__dirname + '/../../../../resources/messages.js');
+
 class ServerInfoForm extends BaseComponent {
 	constructor(props) {
 		super();
@@ -58,8 +60,12 @@ class ServerInfoForm extends BaseComponent {
 				message: 'Are you sure you want to disconnect this organization?'
 			}, response => {
 				if (response === 0) {
-					DomainUtil.removeDomain(this.props.index);
-					this.props.onChange(this.props.index);
+					if (DomainUtil.removeDomain(this.props.index)) {
+						ipcRenderer.send('reload-full-app');
+					} else {
+						const { title, content } = Messages.orgRemovalError(DomainUtil.getDomain(this.props.index).url);
+						dialog.showErrorBox(title, content);
+					}
 				}
 			});
 		});
