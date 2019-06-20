@@ -6,23 +6,25 @@ const BaseComponent = require(__dirname + '/../../components/base.js');
 
 class BaseSection extends BaseComponent {
 	generateSettingOption(props) {
-		const {$element, value, clickHandler} = props;
+		const {$element, disabled, value, clickHandler} = props;
 
 		$element.innerHTML = '';
 
-		const $optionControl = this.generateNodeFromTemplate(this.generateOptionTemplate(value));
+		const $optionControl = this.generateNodeFromTemplate(this.generateOptionTemplate(value, disabled));
 		$element.appendChild($optionControl);
-
-		$optionControl.addEventListener('click', clickHandler);
+		if (!disabled) {
+			$optionControl.addEventListener('click', clickHandler);
+		}
 	}
 
-	generateOptionTemplate(settingOption) {
+	generateOptionTemplate(settingOption, disabled) {
+		const label = disabled ? `<label class="disallowed" />` : `<label/>`;
 		if (settingOption) {
 			return `
 				<div class="action">
 					<div class="switch">
-					  <input class="toggle toggle-round" type="checkbox" checked>
-					  <label></label>
+					  <input class="toggle toggle-round" type="checkbox" checked disabled>
+					  ${label}
 					</div>
 				</div>
 			`;
@@ -31,7 +33,7 @@ class BaseSection extends BaseComponent {
 				<div class="action">
 					<div class="switch">
 					  <input class="toggle toggle-round" type="checkbox">
-					  <label></label>
+					  ${label}
 					</div>
 				</div>
 			`;

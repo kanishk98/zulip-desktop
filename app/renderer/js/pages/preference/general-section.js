@@ -7,6 +7,7 @@ const { app, dialog } = remote;
 const currentBrowserWindow = remote.getCurrentWindow();
 const BaseSection = require(__dirname + '/base-section.js');
 const ConfigUtil = require(__dirname + '/../../utils/config-util.js');
+const EnterpriseUtil = require(__dirname + '/../../utils/enterprise-util.js');
 
 class GeneralSection extends BaseSection {
 	constructor(props) {
@@ -234,6 +235,7 @@ class GeneralSection extends BaseSection {
 	autoUpdateOption() {
 		this.generateSettingOption({
 			$element: document.querySelector('#autoupdate-option .setting-control'),
+			disabled: EnterpriseUtil.configItemExists('autoUpdate'),
 			value: ConfigUtil.getConfigItem('autoUpdate', true),
 			clickHandler: () => {
 				const newValue = !ConfigUtil.getConfigItem('autoUpdate');
