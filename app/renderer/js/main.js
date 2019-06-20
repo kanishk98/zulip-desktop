@@ -152,7 +152,7 @@ class ServerManagerView {
 		for (const setting in settingOptions) {
 			// give preference to defaults defined in global_config.json
 			if (EnterpriseUtil.configItemExists(setting)) {
-				ConfigUtil.setConfigItem(setting, EnterpriseUtil.getConfigItem(setting));
+				ConfigUtil.setConfigItem(setting, EnterpriseUtil.getConfigItem(setting), true);
 			} else if (ConfigUtil.getConfigItem(setting) === null) {
 				ConfigUtil.setConfigItem(setting, settingOptions[setting]);
 			}

@@ -5,6 +5,7 @@ const path = require('path');
 const process = require('process');
 const JsonDB = require('node-json-db');
 const Logger = require('./logger-util');
+const EnterpriseUtil = require('./enterprise-util');
 
 const logger = new Logger({
 	file: 'config-util.log',
@@ -65,7 +66,11 @@ class ConfigUtil {
 		return (value !== undefined);
 	}
 
-	setConfigItem(key, value) {
+	setConfigItem(key, value, override = false) {
+		// if item is in global config and we're not trying to override
+		if (EnterpriseUtil.configItemExists(key) && !override) {
+			return;
+		}
 		this.db.push(`/${key}`, value, true);
 		this.db.save();
 	}
