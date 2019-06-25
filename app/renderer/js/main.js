@@ -16,6 +16,7 @@ const DNDUtil = require(__dirname + '/js/utils/dnd-util.js');
 const ReconnectUtil = require(__dirname + '/js/utils/reconnect-util.js');
 const Logger = require(__dirname + '/js/utils/logger-util.js');
 const CommonUtil = require(__dirname + '/js/utils/common-util.js');
+const TranslationUtil = require(__dirname + '/js/utils/translation-util.js');
 
 const { feedbackHolder } = require(__dirname + '/js/feedback.js');
 
@@ -620,6 +621,10 @@ class ServerManagerView {
 				}
 			});
 		}
+
+		ipcRenderer.on('language-change', (event, language) => {
+			TranslationUtil.refreshLocale(language);
+		});
 
 		ipcRenderer.on('open-settings', (event, settingNav) => {
 			this.openSettings(settingNav);
