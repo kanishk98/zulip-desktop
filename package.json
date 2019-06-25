@@ -124,6 +124,7 @@
     "InstantMessaging"
   ],
   "devDependencies": {
+    "@vitalets/google-translate-api": "2.8.0",
     "assert": "1.4.1",
     "cp-file": "5.0.0",
     "devtron": "1.4.0",
@@ -131,7 +132,6 @@
     "electron-builder": "20.40.2",
     "electron-connect": "0.6.2",
     "electron-debug": "1.4.0",
-    "google-translate-api": "2.3.0",
     "gulp": "4.0.0",
     "gulp-tape": "0.0.9",
     "htmlhint": "0.11.0",
