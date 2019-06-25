@@ -45,8 +45,9 @@ document.addEventListener('DOMContentLoaded', () => {
 	if (params.isPageParams()) {
 	// Get the default language of the server
 		const serverLanguage = page_params.default_language; // eslint-disable-line no-undef, camelcase
+		const domain = page_params.realm_uri; // eslint-disable-line no-undef, camelcase
 		if (serverLanguage) {
-			ipcRenderer.send('forward-message', 'language-change', serverLanguage);
+			ipcRenderer.send('forward-message', 'language-change', { serverLanguage, domain });
 			// Init spellchecker
 			SetupSpellChecker.init(serverLanguage);
 		}

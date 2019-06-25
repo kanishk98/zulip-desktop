@@ -17,12 +17,8 @@ class TranslationUtil {
 		});
 	}
 
-	refreshLocale(locale) {
-		i18n.setLocale(this, locale);
-	}
-
-	__(phrase) {
-		return i18n.__(phrase);
+	__(phrase, locale) {
+		return i18n.__({ phrase, locale: (locale ? locale : 'en') });
 	}
 }
 

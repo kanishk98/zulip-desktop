@@ -22,7 +22,7 @@ const logger = new Logger({
 class AppMenu {
 	getHistorySubmenu() {
 		return [{
-			label: TranslationUtil.__('Back'),
+			label: TranslationUtil.__('Back', this.language),
 			accelerator: process.platform === 'darwin' ? 'Command+Left' : 'Alt+Left',
 			click(item, focusedWindow) {
 				if (focusedWindow) {
@@ -30,7 +30,7 @@ class AppMenu {
 				}
 			}
 		}, {
-			label: TranslationUtil.__('Forward'),
+			label: TranslationUtil.__('Forward', this.language),
 			accelerator: process.platform === 'darwin' ? 'Command+Right' : 'Alt+Right',
 			click(item, focusedWindow) {
 				if (focusedWindow) {
@@ -42,26 +42,26 @@ class AppMenu {
 
 	getToolsSubmenu() {
 		return [{
-			label: TranslationUtil.__(`Check for Updates`),
+			label: TranslationUtil.__(`Check for Updates`, this.language),
 			click() {
 				AppMenu.checkForUpdate();
 			}
 		},
 		{
-			label: TranslationUtil.__(`Release Notes`),
+			label: TranslationUtil.__(`Release Notes`, this.language),
 			click() {
 				shell.openExternal(`https://github.com/zulip/zulip-desktop/releases/tag/v${app.getVersion()}`);
 			}
 		}, {
 			type: 'separator'
 		}, {
-			label: TranslationUtil.__('Factory Reset'),
+			label: TranslationUtil.__('Factory Reset', this.language),
 			accelerator: process.platform === 'darwin' ? 'Command+Shift+D' : 'Ctrl+Shift+D',
 			click() {
 				AppMenu.resetAppSettings();
 			}
 		}, {
-			label: TranslationUtil.__('Download App Logs'),
+			label: TranslationUtil.__('Download App Logs', this.language),
 			click() {
 				const zip = new AdmZip();
 				let date = new Date();
@@ -81,7 +81,7 @@ class AppMenu {
 		}, {
 			type: 'separator'
 		}, {
-			label: TranslationUtil.__('Toggle DevTools for Zulip App'),
+			label: TranslationUtil.__('Toggle DevTools for Zulip App', this.language),
 			accelerator: process.platform === 'darwin' ? 'Alt+Command+I' : 'Ctrl+Shift+I',
 			click(item, focusedWindow) {
 				if (focusedWindow) {
@@ -89,7 +89,7 @@ class AppMenu {
 				}
 			}
 		}, {
-			label: TranslationUtil.__('Toggle DevTools for Active Tab'),
+			label: TranslationUtil.__('Toggle DevTools for Active Tab', this.language),
 			accelerator: process.platform === 'darwin' ? 'Alt+Command+U' : 'Ctrl+Shift+U',
 			click(item, focusedWindow) {
 				if (focusedWindow) {
@@ -101,7 +101,7 @@ class AppMenu {
 
 	getViewSubmenu() {
 		return [{
-			label: TranslationUtil.__('Reload'),
+			label: TranslationUtil.__('Reload', this.language),
 			accelerator: 'CommandOrControl+R',
 			click(item, focusedWindow) {
 				if (focusedWindow) {
@@ -109,7 +109,7 @@ class AppMenu {
 				}
 			}
 		}, {
-			label: TranslationUtil.__('Hard Reload'),
+			label: TranslationUtil.__('Hard Reload', this.language),
 			accelerator: 'CommandOrControl+Shift+R',
 			click(item, focusedWindow) {
 				if (focusedWindow) {
@@ -119,10 +119,10 @@ class AppMenu {
 		}, {
 			type: 'separator'
 		}, {
-			label: TranslationUtil.__('Toggle Full Screen'),
+			label: TranslationUtil.__('Toggle Full Screen', this.language),
 			role: 'togglefullscreen'
 		}, {
-			label: TranslationUtil.__('Zoom In'),
+			label: TranslationUtil.__('Zoom In', this.language),
 			accelerator: process.platform === 'darwin' ? 'Command+Plus' : 'Control+=',
 			click(item, focusedWindow) {
 				if (focusedWindow) {
@@ -130,7 +130,7 @@ class AppMenu {
 				}
 			}
 		}, {
-			label: TranslationUtil.__('Zoom Out'),
+			label: TranslationUtil.__('Zoom Out', this.language),
 			accelerator: 'CommandOrControl+-',
 			click(item, focusedWindow) {
 				if (focusedWindow) {
@@ -138,7 +138,7 @@ class AppMenu {
 				}
 			}
 		}, {
-			label: TranslationUtil.__('Actual Size'),
+			label: TranslationUtil.__('Actual Size', this.language),
 			accelerator: 'CommandOrControl+0',
 			click(item, focusedWindow) {
 				if (focusedWindow) {
@@ -148,14 +148,14 @@ class AppMenu {
 		}, {
 			type: 'separator'
 		}, {
-			label: TranslationUtil.__('Toggle Tray Icon'),
+			label: TranslationUtil.__('Toggle Tray Icon', this.language),
 			click(item, focusedWindow) {
 				if (focusedWindow) {
 					focusedWindow.webContents.send('toggletray');
 				}
 			}
 		}, {
-			label: TranslationUtil.__('Toggle Sidebar'),
+			label: TranslationUtil.__('Toggle Sidebar', this.language),
 			accelerator: 'CommandOrControl+Shift+S',
 			click(item, focusedWindow) {
 				if (focusedWindow) {
@@ -188,7 +188,7 @@ class AppMenu {
 				enabled: false
 			},
 			{
-				label: TranslationUtil.__('About Zulip'),
+				label: TranslationUtil.__('About Zulip', this.language),
 				click(item, focusedWindow) {
 					if (focusedWindow) {
 						AppMenu.sendAction('open-about');
@@ -216,10 +216,10 @@ class AppMenu {
 
 	getWindowSubmenu(tabs, activeTabIndex) {
 		const initialSubmenu = [{
-			label: TranslationUtil.__('Minimize'),
+			label: TranslationUtil.__('Minimize', this.language),
 			role: 'minimize'
 		}, {
-			label: TranslationUtil.__('Close'),
+			label: TranslationUtil.__('Close', this.language),
 			role: 'close'
 		}];
 
@@ -250,7 +250,7 @@ class AppMenu {
 				type: 'separator'
 			});
 			initialSubmenu.push({
-				label: TranslationUtil.__('Switch to Next Organization'),
+				label: TranslationUtil.__('Switch to Next Organization', this.language),
 				accelerator: `Ctrl+Tab`,
 				enabled: tabs[activeTabIndex].props.role === 'server',
 				click(item, focusedWindow) {
@@ -259,7 +259,7 @@ class AppMenu {
 					}
 				}
 			}, {
-				label: TranslationUtil.__('Switch to Previous Organization'),
+				label: TranslationUtil.__('Switch to Previous Organization', this.language),
 				accelerator: `Ctrl+Shift+Tab`,
 				enabled: tabs[activeTabIndex].props.role === 'server',
 				click(item, focusedWindow) {
@@ -279,7 +279,7 @@ class AppMenu {
 		return [{
 			label: `${app.getName()}`,
 			submenu: [{
-				label: TranslationUtil.__('Add Organization'),
+				label: TranslationUtil.__('Add Organization', this.language),
 				accelerator: 'Cmd+Shift+N',
 				click(item, focusedWindow) {
 					if (focusedWindow) {
@@ -287,22 +287,22 @@ class AppMenu {
 					}
 				}
 			}, {
-				label: TranslationUtil.__('Toggle Do Not Disturb'),
+				label: TranslationUtil.__('Toggle Do Not Disturb', this.language),
 				accelerator: 'Cmd+Shift+M',
 				click() {
 					const dndUtil = DNDUtil.toggle();
 					AppMenu.sendAction('toggle-dnd', dndUtil.dnd, dndUtil.newSettings);
 				}
 			}, {
-				label: TranslationUtil.__('Desktop Settings'),
+				label: TranslationUtil.__('Desktop Settings', this.language),
 				accelerator: 'Cmd+,',
 				click(item, focusedWindow) {
 					if (focusedWindow) {
-						AppMenu.sendAction('open-settings');
+						AppMenu.sendAction('open-settings', this.language);
 					}
 				}
 			}, {
-				label: TranslationUtil.__('Keyboard Shortcuts'),
+				label: TranslationUtil.__('Keyboard Shortcuts', this.language),
 				accelerator: 'Cmd+Shift+K',
 				enabled: enableMenu,
 				click(item, focusedWindow) {
@@ -313,7 +313,7 @@ class AppMenu {
 			}, {
 				type: 'separator'
 			}, {
-				label: TranslationUtil.__('Copy Zulip URL'),
+				label: TranslationUtil.__('Copy Zulip URL', this.language),
 				accelerator: 'Cmd+Shift+C',
 				click(item, focusedWindow) {
 					if (focusedWindow) {
@@ -321,7 +321,7 @@ class AppMenu {
 					}
 				}
 			}, {
-				label: TranslationUtil.__('Log Out of Organization'),
+				label: TranslationUtil.__('Log Out of Organization', this.language),
 				accelerator: 'Cmd+L',
 				enabled: enableMenu,
 				click(item, focusedWindow) {
@@ -332,72 +332,72 @@ class AppMenu {
 			}, {
 				type: 'separator'
 			}, {
-				label: TranslationUtil.__('Services'),
+				label: TranslationUtil.__('Services', this.language),
 				role: 'services',
 				submenu: []
 			}, {
 				type: 'separator'
 			}, {
-				label: TranslationUtil.__('Hide'),
+				label: TranslationUtil.__('Hide', this.language),
 				role: 'hide'
 			}, {
-				label: TranslationUtil.__('Hide Others'),
+				label: TranslationUtil.__('Hide Others', this.language),
 				role: 'hideothers'
 			}, {
-				label: TranslationUtil.__('Unhide'),
+				label: TranslationUtil.__('Unhide', this.language),
 				role: 'unhide'
 			}, {
 				type: 'separator'
 			}, {
-				label: TranslationUtil.__('Minimize'),
+				label: TranslationUtil.__('Minimize', this.language),
 				role: 'minimize'
 			}, {
-				label: TranslationUtil.__('Close'),
+				label: TranslationUtil.__('Close', this.language),
 				role: 'close'
 			}, {
-				label: TranslationUtil.__('Quit'),
+				label: TranslationUtil.__('Quit', this.language),
 				role: 'quit'
 			}]
 		}, {
-			label: TranslationUtil.__('Edit'),
+			label: TranslationUtil.__('Edit', this.language),
 			submenu: [{
-				label: TranslationUtil.__('Undo'),
+				label: TranslationUtil.__('Undo', this.language),
 				role: 'undo'
 			}, {
-				label: TranslationUtil.__('Redo'),
+				label: TranslationUtil.__('Redo', this.language),
 				role: 'redo'
 			}, {
 				type: 'separator'
 			}, {
-				label: TranslationUtil.__('Cut'),
+				label: TranslationUtil.__('Cut', this.language),
 				role: 'cut'
 			}, {
-				label: TranslationUtil.__('Copy'),
+				label: TranslationUtil.__('Copy', this.language),
 				role: 'copy'
 			}, {
-				label: TranslationUtil.__('Paste'),
+				label: TranslationUtil.__('Paste', this.language),
 				role: 'paste'
 			}, {
-				label: TranslationUtil.__('Paste and Match Style'),
+				label: TranslationUtil.__('Paste and Match Style', this.language),
 				role: 'pasteandmatchstyle'
 			}, {
-				label: TranslationUtil.__('Select All'),
+				label: TranslationUtil.__('Select All', this.language),
 				role: 'selectall'
 			}]
 		}, {
-			label: TranslationUtil.__('View'),
+			label: TranslationUtil.__('View', this.language),
 			submenu: this.getViewSubmenu()
 		}, {
-			label: TranslationUtil.__('History'),
+			label: TranslationUtil.__('History', this.language),
 			submenu: this.getHistorySubmenu()
 		}, {
-			label: TranslationUtil.__('Window'),
+			label: TranslationUtil.__('Window', this.language),
 			submenu: this.getWindowSubmenu(tabs, activeTabIndex)
 		}, {
-			label: TranslationUtil.__('Tools'),
+			label: TranslationUtil.__('Tools', this.language),
 			submenu: this.getToolsSubmenu()
 		}, {
-			label: TranslationUtil.__('Help'),
+			label: TranslationUtil.__('Help', this.language),
 			role: 'help',
 			submenu: this.getHelpSubmenu()
 		}];
@@ -405,11 +405,10 @@ class AppMenu {
 
 	getOtherTpl(props) {
 		const { tabs, activeTabIndex, enableMenu } = props;
-
 		return [{
-			label: TranslationUtil.__('File'),
+			label: TranslationUtil.__('File', this.language),
 			submenu: [{
-				label: TranslationUtil.__('Add Organization'),
+				label: TranslationUtil.__('Add Organization', this.language),
 				accelerator: 'Ctrl+Shift+N',
 				click(item, focusedWindow) {
 					if (focusedWindow) {
@@ -419,14 +418,14 @@ class AppMenu {
 			}, {
 				type: 'separator'
 			}, {
-				label: TranslationUtil.__('Toggle Do Not Disturb'),
+				label: TranslationUtil.__('Toggle Do Not Disturb', this.language),
 				accelerator: 'Ctrl+Shift+M',
 				click() {
 					const dndUtil = DNDUtil.toggle();
 					AppMenu.sendAction('toggle-dnd', dndUtil.dnd, dndUtil.newSettings);
 				}
 			}, {
-				label: TranslationUtil.__('Desktop Settings'),
+				label: TranslationUtil.__('Desktop Settings', this.language),
 				accelerator: 'Ctrl+,',
 				click(item, focusedWindow) {
 					if (focusedWindow) {
@@ -434,7 +433,7 @@ class AppMenu {
 					}
 				}
 			}, {
-				label: TranslationUtil.__('Keyboard Shortcuts'),
+				label: TranslationUtil.__('Keyboard Shortcuts', this.language),
 				accelerator: 'Ctrl+Shift+K',
 				enabled: enableMenu,
 				click(item, focusedWindow) {
@@ -445,7 +444,7 @@ class AppMenu {
 			}, {
 				type: 'separator'
 			}, {
-				label: TranslationUtil.__('Copy Zulip URL'),
+				label: TranslationUtil.__('Copy Zulip URL', this.language),
 				accelerator: 'Ctrl+Shift+C',
 				click(item, focusedWindow) {
 					if (focusedWindow) {
@@ -453,7 +452,7 @@ class AppMenu {
 					}
 				}
 			}, {
-				label: TranslationUtil.__('Log Out of Organization'),
+				label: TranslationUtil.__('Log Out of Organization', this.language),
 				accelerator: 'Ctrl+L',
 				enabled: enableMenu,
 				click(item, focusedWindow) {
@@ -464,58 +463,58 @@ class AppMenu {
 			}, {
 				type: 'separator'
 			}, {
-				label: TranslationUtil.__('Minimize'),
+				label: TranslationUtil.__('Minimize', this.language),
 				role: 'minimize'
 			}, {
-				label: TranslationUtil.__('Close'),
+				label: TranslationUtil.__('Close', this.language),
 				role: 'close'
 			}, {
-				label: TranslationUtil.__('Quit'),
+				label: TranslationUtil.__('Quit', this.language),
 				role: 'quit',
 				accelerator: 'Ctrl+Q'
 			}]
 		}, {
-			label: TranslationUtil.__('Edit'),
+			label: TranslationUtil.__('Edit', this.language),
 			submenu: [{
-				label: TranslationUtil.__('Undo'),
+				label: TranslationUtil.__('Undo', this.language),
 				role: 'undo'
 			}, {
-				label: TranslationUtil.__('Redo'),
+				label: TranslationUtil.__('Redo', this.language),
 				role: 'redo'
 			}, {
 				type: 'separator'
 			}, {
-				label: TranslationUtil.__('Cut'),
+				label: TranslationUtil.__('Cut', this.language),
 				role: 'cut'
 			}, {
-				label: TranslationUtil.__('Copy'),
+				label: TranslationUtil.__('Copy', this.language),
 				role: 'copy'
 			}, {
-				label: TranslationUtil.__('Paste'),
+				label: TranslationUtil.__('Paste', this.language),
 				role: 'paste'
 			}, {
-				label: TranslationUtil.__('Paste and Match Style'),
+				label: TranslationUtil.__('Paste and Match Style', this.language),
 				role: 'pasteandmatchstyle'
 			}, {
 				type: 'separator'
 			}, {
-				label: TranslationUtil.__('Select All'),
+				label: TranslationUtil.__('Select All', this.language),
 				role: 'selectall'
 			}]
 		}, {
-			label: TranslationUtil.__('View'),
+			label: TranslationUtil.__('View', this.language),
 			submenu: this.getViewSubmenu()
 		}, {
-			label: TranslationUtil.__('History'),
+			label: TranslationUtil.__('History', this.language),
 			submenu: this.getHistorySubmenu()
 		}, {
-			label: TranslationUtil.__('Window'),
+			label: TranslationUtil.__('Window', this.language),
 			submenu: this.getWindowSubmenu(tabs, activeTabIndex)
 		}, {
-			label: TranslationUtil.__('Tools'),
+			label: TranslationUtil.__('Tools', this.language),
 			submenu: this.getToolsSubmenu()
 		}, {
-			label: TranslationUtil.__('Help'),
+			label: TranslationUtil.__('Help', this.language),
 			role: 'help',
 			submenu: this.getHelpSubmenu()
 		}];
@@ -583,6 +582,7 @@ class AppMenu {
 	}
 
 	setMenu(props) {
+		this.language = props.language ? props.language : 'en';
 		const tpl = process.platform === 'darwin' ? this.getDarwinTpl(props) : this.getOtherTpl(props);
 		const menu = Menu.buildFromTemplate(tpl);
 		Menu.setApplicationMenu(menu);

@@ -16,7 +16,6 @@ const DNDUtil = require(__dirname + '/js/utils/dnd-util.js');
 const ReconnectUtil = require(__dirname + '/js/utils/reconnect-util.js');
 const Logger = require(__dirname + '/js/utils/logger-util.js');
 const CommonUtil = require(__dirname + '/js/utils/common-util.js');
-const TranslationUtil = require(__dirname + '/js/utils/translation-util.js');
 
 const { feedbackHolder } = require(__dirname + '/js/feedback.js');
 
@@ -187,6 +186,7 @@ class ServerManagerView {
 			tabIndex,
 			onHover: this.onHover.bind(this, index),
 			onHoverOut: this.onHoverOut.bind(this, index),
+			language: 'en',
 			webview: new WebView({
 				$root: this.$webviewsContainer,
 				index,
@@ -262,6 +262,17 @@ class ServerManagerView {
 	initDNDButton() {
 		const dnd = ConfigUtil.getConfigItem('dnd', false);
 		this.toggleDNDButton(dnd);
+	}
+
+	getServerIndexByDomain(domain) {
+		// searches this.tabs for same URL as domain and returns corresponding index
+		// care should be taken that -1 is never returned from this method
+		for (const tab in this.tabs) {
+			if (this.tabs[tab].webview.props.url === domain) {
+				return tab;
+			}
+		}
+		return -1;
 	}
 
 	getTabIndex() {
@@ -463,14 +474,14 @@ class ServerManagerView {
 		this.tabs[index].activate();
 
 		this.showLoading(this.loading[this.tabs[this.activeTabIndex].webview.props.url]);
-
 		ipcRenderer.send('update-menu', {
 			// JSON stringify this.tabs to avoid a crash
 			// util.inspect is being used to handle circular references
 			tabs: this.tabsForIpc,
 			activeTabIndex: this.activeTabIndex,
 			// Following flag controls whether a menu item should be enabled or not
-			enableMenu: this.tabs[index].props.role === 'server'
+			enableMenu: this.tabs[index].props.role === 'server',
+			language: this.tabs[index].props.language
 		});
 	}
 
@@ -622,8 +633,18 @@ class ServerManagerView {
 			});
 		}
 
-		ipcRenderer.on('language-change', (event, language) => {
-			TranslationUtil.refreshLocale(language);
+		ipcRenderer.on('language-change', (event, { serverLanguage, domain }) => {
+			const index = this.getServerIndexByDomain(domain);
+			const oldLanguage = this.tabs[index].props.language;
+			this.tabs[index].props.language = serverLanguage;
+			if (oldLanguage !== serverLanguage) {
+				ipcRenderer.send('update-menu', {
+					tabs: this.tabsForIpc,
+					activeTabIndex: this.activeTabIndex,
+					enableMenu: this.tabs[index].props.role === 'server',
+					language: serverLanguage
+				});
+			}
 		});
 
 		ipcRenderer.on('open-settings', (event, settingNav) => {
