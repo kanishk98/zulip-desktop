@@ -10,6 +10,7 @@ const { appUpdater } = require('./autoupdater');
 const ConfigUtil = require(__dirname + '/../renderer/js/utils/config-util.js');
 const DNDUtil = require(__dirname + '/../renderer/js/utils/dnd-util.js');
 const Logger = require(__dirname + '/../renderer/js/utils/logger-util.js');
+const TranslationUtil = require(__dirname + '/../renderer/js/utils/translation-util.js');
 
 const appName = app.getName();
 
@@ -21,7 +22,7 @@ const logger = new Logger({
 class AppMenu {
 	getHistorySubmenu() {
 		return [{
-			label: 'Back',
+			label: TranslationUtil.__('Back'),
 			accelerator: process.platform === 'darwin' ? 'Command+Left' : 'Alt+Left',
 			click(item, focusedWindow) {
 				if (focusedWindow) {
@@ -29,7 +30,7 @@ class AppMenu {
 				}
 			}
 		}, {
-			label: 'Forward',
+			label: TranslationUtil.__('Forward'),
 			accelerator: process.platform === 'darwin' ? 'Command+Right' : 'Alt+Right',
 			click(item, focusedWindow) {
 				if (focusedWindow) {
@@ -41,26 +42,26 @@ class AppMenu {
 
 	getToolsSubmenu() {
 		return [{
-			label: `Check for Updates`,
+			label: TranslationUtil.__(`Check for Updates`),
 			click() {
 				AppMenu.checkForUpdate();
 			}
 		},
 		{
-			label: `Release Notes`,
+			label: TranslationUtil.__(`Release Notes`),
 			click() {
 				shell.openExternal(`https://github.com/zulip/zulip-desktop/releases/tag/v${app.getVersion()}`);
 			}
 		}, {
 			type: 'separator'
 		}, {
-			label: 'Factory Reset',
+			label: TranslationUtil.__('Factory Reset'),
 			accelerator: process.platform === 'darwin' ? 'Command+Shift+D' : 'Ctrl+Shift+D',
 			click() {
 				AppMenu.resetAppSettings();
 			}
 		}, {
-			label: 'Download App Logs',
+			label: TranslationUtil.__('Download App Logs'),
 			click() {
 				const zip = new AdmZip();
 				let date = new Date();
@@ -80,7 +81,7 @@ class AppMenu {
 		}, {
 			type: 'separator'
 		}, {
-			label: 'Toggle DevTools for Zulip App',
+			label: TranslationUtil.__('Toggle DevTools for Zulip App'),
 			accelerator: process.platform === 'darwin' ? 'Alt+Command+I' : 'Ctrl+Shift+I',
 			click(item, focusedWindow) {
 				if (focusedWindow) {
@@ -88,7 +89,7 @@ class AppMenu {
 				}
 			}
 		}, {
-			label: 'Toggle DevTools for Active Tab',
+			label: TranslationUtil.__('Toggle DevTools for Active Tab'),
 			accelerator: process.platform === 'darwin' ? 'Alt+Command+U' : 'Ctrl+Shift+U',
 			click(item, focusedWindow) {
 				if (focusedWindow) {
@@ -100,7 +101,7 @@ class AppMenu {
 
 	getViewSubmenu() {
 		return [{
-			label: 'Reload',
+			label: TranslationUtil.__('Reload'),
 			accelerator: 'CommandOrControl+R',
 			click(item, focusedWindow) {
 				if (focusedWindow) {
@@ -108,7 +109,7 @@ class AppMenu {
 				}
 			}
 		}, {
-			label: 'Hard Reload',
+			label: TranslationUtil.__('Hard Reload'),
 			accelerator: 'CommandOrControl+Shift+R',
 			click(item, focusedWindow) {
 				if (focusedWindow) {
@@ -118,9 +119,10 @@ class AppMenu {
 		}, {
 			type: 'separator'
 		}, {
+			label: TranslationUtil.__('Toggle Full Screen'),
 			role: 'togglefullscreen'
 		}, {
-			label: 'Zoom In',
+			label: TranslationUtil.__('Zoom In'),
 			accelerator: process.platform === 'darwin' ? 'Command+Plus' : 'Control+=',
 			click(item, focusedWindow) {
 				if (focusedWindow) {
@@ -128,7 +130,7 @@ class AppMenu {
 				}
 			}
 		}, {
-			label: 'Zoom Out',
+			label: TranslationUtil.__('Zoom Out'),
 			accelerator: 'CommandOrControl+-',
 			click(item, focusedWindow) {
 				if (focusedWindow) {
@@ -136,7 +138,7 @@ class AppMenu {
 				}
 			}
 		}, {
-			label: 'Actual Size',
+			label: TranslationUtil.__('Actual Size'),
 			accelerator: 'CommandOrControl+0',
 			click(item, focusedWindow) {
 				if (focusedWindow) {
@@ -146,14 +148,14 @@ class AppMenu {
 		}, {
 			type: 'separator'
 		}, {
-			label: 'Toggle Tray Icon',
+			label: TranslationUtil.__('Toggle Tray Icon'),
 			click(item, focusedWindow) {
 				if (focusedWindow) {
 					focusedWindow.webContents.send('toggletray');
 				}
 			}
 		}, {
-			label: 'Toggle Sidebar',
+			label: TranslationUtil.__('Toggle Sidebar'),
 			accelerator: 'CommandOrControl+Shift+S',
 			click(item, focusedWindow) {
 				if (focusedWindow) {
@@ -186,7 +188,7 @@ class AppMenu {
 				enabled: false
 			},
 			{
-				label: 'About Zulip',
+				label: TranslationUtil.__('About Zulip'),
 				click(item, focusedWindow) {
 					if (focusedWindow) {
 						AppMenu.sendAction('open-about');
@@ -194,14 +196,14 @@ class AppMenu {
 				}
 			},
 			{
-				label: `Help Center`,
+				label: TranslationUtil.__(`Help Center`),
 				click(focusedWindow) {
 					if (focusedWindow) {
 						AppMenu.sendAction('open-help');
 					}
 				}
 			}, {
-				label: 'Report an Issue',
+				label: TranslationUtil.__('Report an Issue'),
 				click() {
 					// the goal is to notify the main.html BrowserWindow
 					// which may not be the focused window.
@@ -214,8 +216,10 @@ class AppMenu {
 
 	getWindowSubmenu(tabs, activeTabIndex) {
 		const initialSubmenu = [{
+			label: TranslationUtil.__('Minimize'),
 			role: 'minimize'
 		}, {
+			label: TranslationUtil.__('Close'),
 			role: 'close'
 		}];
 
@@ -246,7 +250,7 @@ class AppMenu {
 				type: 'separator'
 			});
 			initialSubmenu.push({
-				label: 'Switch to Next Organization',
+				label: TranslationUtil.__('Switch to Next Organization'),
 				accelerator: `Ctrl+Tab`,
 				enabled: tabs[activeTabIndex].props.role === 'server',
 				click(item, focusedWindow) {
@@ -255,7 +259,7 @@ class AppMenu {
 					}
 				}
 			}, {
-				label: 'Switch to Previous Organization',
+				label: TranslationUtil.__('Switch to Previous Organization'),
 				accelerator: `Ctrl+Shift+Tab`,
 				enabled: tabs[activeTabIndex].props.role === 'server',
 				click(item, focusedWindow) {
@@ -275,7 +279,7 @@ class AppMenu {
 		return [{
 			label: `${app.getName()}`,
 			submenu: [{
-				label: 'Add Organization',
+				label: TranslationUtil.__('Add Organization'),
 				accelerator: 'Cmd+Shift+N',
 				click(item, focusedWindow) {
 					if (focusedWindow) {
@@ -283,14 +287,14 @@ class AppMenu {
 					}
 				}
 			}, {
-				label: 'Toggle Do Not Disturb',
+				label: TranslationUtil.__('Toggle Do Not Disturb'),
 				accelerator: 'Cmd+Shift+M',
 				click() {
 					const dndUtil = DNDUtil.toggle();
 					AppMenu.sendAction('toggle-dnd', dndUtil.dnd, dndUtil.newSettings);
 				}
 			}, {
-				label: 'Desktop Settings',
+				label: TranslationUtil.__('Desktop Settings'),
 				accelerator: 'Cmd+,',
 				click(item, focusedWindow) {
 					if (focusedWindow) {
@@ -298,7 +302,7 @@ class AppMenu {
 					}
 				}
 			}, {
-				label: 'Keyboard Shortcuts',
+				label: TranslationUtil.__('Keyboard Shortcuts'),
 				accelerator: 'Cmd+Shift+K',
 				enabled: enableMenu,
 				click(item, focusedWindow) {
@@ -309,7 +313,7 @@ class AppMenu {
 			}, {
 				type: 'separator'
 			}, {
-				label: 'Copy Zulip URL',
+				label: TranslationUtil.__('Copy Zulip URL'),
 				accelerator: 'Cmd+Shift+C',
 				click(item, focusedWindow) {
 					if (focusedWindow) {
@@ -317,7 +321,7 @@ class AppMenu {
 					}
 				}
 			}, {
-				label: 'Log Out of Organization',
+				label: TranslationUtil.__('Log Out of Organization'),
 				accelerator: 'Cmd+L',
 				enabled: enableMenu,
 				click(item, focusedWindow) {
@@ -328,53 +332,72 @@ class AppMenu {
 			}, {
 				type: 'separator'
 			}, {
+				label: TranslationUtil.__('Services'),
 				role: 'services',
 				submenu: []
 			}, {
 				type: 'separator'
 			}, {
+				label: TranslationUtil.__('Hide'),
 				role: 'hide'
 			}, {
+				label: TranslationUtil.__('Hide Others'),
 				role: 'hideothers'
 			}, {
+				label: TranslationUtil.__('Unhide'),
 				role: 'unhide'
 			}, {
 				type: 'separator'
 			}, {
+				label: TranslationUtil.__('Minimize'),
+				role: 'minimize'
+			}, {
+				label: TranslationUtil.__('Close'),
+				role: 'close'
+			}, {
+				label: TranslationUtil.__('Quit'),
 				role: 'quit'
 			}]
 		}, {
-			label: 'Edit',
+			label: TranslationUtil.__('Edit'),
 			submenu: [{
+				label: TranslationUtil.__('Undo'),
 				role: 'undo'
 			}, {
+				label: TranslationUtil.__('Redo'),
 				role: 'redo'
 			}, {
 				type: 'separator'
 			}, {
+				label: TranslationUtil.__('Cut'),
 				role: 'cut'
 			}, {
+				label: TranslationUtil.__('Copy'),
 				role: 'copy'
 			}, {
+				label: TranslationUtil.__('Paste'),
 				role: 'paste'
 			}, {
+				label: TranslationUtil.__('Paste and Match Style'),
 				role: 'pasteandmatchstyle'
 			}, {
+				label: TranslationUtil.__('Select All'),
 				role: 'selectall'
 			}]
 		}, {
-			label: 'View',
+			label: TranslationUtil.__('View'),
 			submenu: this.getViewSubmenu()
 		}, {
-			label: 'History',
+			label: TranslationUtil.__('History'),
 			submenu: this.getHistorySubmenu()
 		}, {
-			label: 'Window',
+			label: TranslationUtil.__('Window'),
 			submenu: this.getWindowSubmenu(tabs, activeTabIndex)
 		}, {
-			label: 'Tools',
+			label: TranslationUtil.__('Tools'),
 			submenu: this.getToolsSubmenu()
 		}, {
+			label: TranslationUtil.__('Help'),
 			role: 'help',
 			submenu: this.getHelpSubmenu()
 		}];
@@ -384,9 +407,9 @@ class AppMenu {
 		const { tabs, activeTabIndex, enableMenu } = props;
 
 		return [{
-			label: '&File',
+			label: TranslationUtil.__('File'),
 			submenu: [{
-				label: 'Add Organization',
+				label: TranslationUtil.__('Add Organization'),
 				accelerator: 'Ctrl+Shift+N',
 				click(item, focusedWindow) {
 					if (focusedWindow) {
@@ -396,14 +419,14 @@ class AppMenu {
 			}, {
 				type: 'separator'
 			}, {
-				label: 'Toggle Do Not Disturb',
+				label: TranslationUtil.__('Toggle Do Not Disturb'),
 				accelerator: 'Ctrl+Shift+M',
 				click() {
 					const dndUtil = DNDUtil.toggle();
 					AppMenu.sendAction('toggle-dnd', dndUtil.dnd, dndUtil.newSettings);
 				}
 			}, {
-				label: 'Desktop Settings',
+				label: TranslationUtil.__('Desktop Settings'),
 				accelerator: 'Ctrl+,',
 				click(item, focusedWindow) {
 					if (focusedWindow) {
@@ -411,7 +434,7 @@ class AppMenu {
 					}
 				}
 			}, {
-				label: 'Keyboard Shortcuts',
+				label: TranslationUtil.__('Keyboard Shortcuts'),
 				accelerator: 'Ctrl+Shift+K',
 				enabled: enableMenu,
 				click(item, focusedWindow) {
@@ -422,7 +445,7 @@ class AppMenu {
 			}, {
 				type: 'separator'
 			}, {
-				label: 'Copy Zulip URL',
+				label: TranslationUtil.__('Copy Zulip URL'),
 				accelerator: 'Ctrl+Shift+C',
 				click(item, focusedWindow) {
 					if (focusedWindow) {
@@ -430,7 +453,7 @@ class AppMenu {
 					}
 				}
 			}, {
-				label: 'Log Out of Organization',
+				label: TranslationUtil.__('Log Out of Organization'),
 				accelerator: 'Ctrl+L',
 				enabled: enableMenu,
 				click(item, focusedWindow) {
@@ -441,44 +464,58 @@ class AppMenu {
 			}, {
 				type: 'separator'
 			}, {
+				label: TranslationUtil.__('Minimize'),
+				role: 'minimize'
+			}, {
+				label: TranslationUtil.__('Close'),
+				role: 'close'
+			}, {
+				label: TranslationUtil.__('Quit'),
 				role: 'quit',
 				accelerator: 'Ctrl+Q'
 			}]
 		}, {
-			label: '&Edit',
+			label: TranslationUtil.__('Edit'),
 			submenu: [{
+				label: TranslationUtil.__('Undo'),
 				role: 'undo'
 			}, {
+				label: TranslationUtil.__('Redo'),
 				role: 'redo'
 			}, {
 				type: 'separator'
 			}, {
+				label: TranslationUtil.__('Cut'),
 				role: 'cut'
 			}, {
+				label: TranslationUtil.__('Copy'),
 				role: 'copy'
 			}, {
+				label: TranslationUtil.__('Paste'),
 				role: 'paste'
 			}, {
+				label: TranslationUtil.__('Paste and Match Style'),
 				role: 'pasteandmatchstyle'
 			}, {
 				type: 'separator'
 			}, {
+				label: TranslationUtil.__('Select All'),
 				role: 'selectall'
 			}]
 		}, {
-			label: '&View',
+			label: TranslationUtil.__('View'),
 			submenu: this.getViewSubmenu()
 		}, {
-			label: '&History',
+			label: TranslationUtil.__('History'),
 			submenu: this.getHistorySubmenu()
 		}, {
-			label: '&Window',
+			label: TranslationUtil.__('Window'),
 			submenu: this.getWindowSubmenu(tabs, activeTabIndex)
 		}, {
-			label: '&Tools',
+			label: TranslationUtil.__('Tools'),
 			submenu: this.getToolsSubmenu()
 		}, {
-			label: '&Help',
+			label: TranslationUtil.__('Help'),
 			role: 'help',
 			submenu: this.getHelpSubmenu()
 		}];
