@@ -94,6 +94,7 @@ class ServerManagerView {
 	tabs: ServerOrFunctionalTab[];
 	functionalTabs: AnyObject;
 	tabIndex: number;
+	presetOrgs: any[];
 	constructor() {
 		this.$addServerButton = document.querySelector('#add-tab');
 		this.$tabsContainer = document.querySelector('#tabs-container');
@@ -129,6 +130,7 @@ class ServerManagerView {
 		this.loading = {};
 		this.activeTabIndex = -1;
 		this.tabs = [];
+		this.presetOrgs = [];
 		this.functionalTabs = {};
 		this.tabIndex = 0;
 	}
@@ -248,14 +250,14 @@ class ServerManagerView {
 
 	async initPresetOrgs(): Promise<void> {
 		const preAddedDomains = DomainUtil.getDomains();
-		const presetOrgs = EnterpriseUtil.getConfigItem('presetOrganizations', []);
+		this.presetOrgs = EnterpriseUtil.getConfigItem('presetOrganizations', []);
 		// set to true if at least one new domain is added
 		const domainPromises = [];
-		for (const url in presetOrgs) {
-			if (DomainUtil.duplicateDomain(presetOrgs[url])) {
+		for (const url of this.presetOrgs) {
+			if (DomainUtil.duplicateDomain(url)) {
 				continue;
 			}
-			domainPromises.push(this.queueDomain(presetOrgs[url]));
+			domainPromises.push(this.queueDomain(url));
 		}
 		const domainsAdded = await Promise.all(domainPromises);
 		if (domainsAdded.includes(true)) {
@@ -291,8 +293,11 @@ class ServerManagerView {
 			this.activateTab(ConfigUtil.getConfigItem('lastActiveTab'));
 			// Remove focus from the settings icon at sidebar bottom
 			this.$settingsButton.classList.remove('active');
-		} else {
+		} else if (this.presetOrgs.length === 0) {
+			// not attempting to add organisations in the background
 			this.openSettings('AddServer');
+		} else {
+			this.showLoading(true);
 		}
 	}
 
