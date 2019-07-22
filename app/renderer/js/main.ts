@@ -716,8 +716,12 @@ class ServerManagerView {
 							message: 'Are you sure you want to disconnect this organization?'
 						}, response => {
 							if (response === 0) {
-								DomainUtil.removeDomain(index);
-								ipcRenderer.send('reload-full-app');
+								if (DomainUtil.removeDomain(index)) {
+									ipcRenderer.send('reload-full-app');
+								} else {
+									const { title, content } = Messages.orgRemovalError(DomainUtil.getDomain(index).url);
+									dialog.showErrorBox(title, content);
+								}
 							}
 						});
 					}

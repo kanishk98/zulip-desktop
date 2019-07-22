@@ -29,6 +29,13 @@ class Messages {
 			content: `Please contact your system administrator.`
 		};
 	}
+
+	orgRemovalError(url: string): any {
+		return {
+			title: `Removing ${url} is a restricted operation.`,
+			content: `Please contact your system administrator.`
+		};
+	}
 }
 
 export = new Messages();
