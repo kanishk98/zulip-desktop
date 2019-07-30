@@ -92,7 +92,7 @@ class ServerManagerView {
 	$fullscreenEscapeKey: string;
 	loading: AnyObject;
 	activeTabIndex: number;
-	servers: ServerOrFunctionalTab[];
+	servers: any[];
 	tabs: ServerOrFunctionalTab[];
 	functionalTabs: AnyObject;
 	tabIndex: number;
@@ -132,7 +132,7 @@ class ServerManagerView {
 
 		this.loading = {};
 		this.activeTabIndex = -1;
-		this.servers = [];
+		this.servers = DomainUtil.getDomains();
 		this.tabs = [];
 		this.functionalTabs = {};
 		this.tabIndex = 0;
@@ -235,18 +235,13 @@ class ServerManagerView {
 
 	onEnd(): void {
 		const newServers: any[] | ServerOrFunctionalTab[] = [];
-		const tabMap: any = {};
 		const tabElements = document.querySelectorAll('#tabs-container .tab');
 		tabElements.forEach((el, index) => {
 			const oldIndex = Number(el.getAttribute('data-tab-id')) % this.servers.length;
-			tabMap[index] = oldIndex;
-			newServers.push(this.servers[index]);
+			newServers.push(this.servers[oldIndex]);
 			el.setAttribute('data-tab-id', index.toString());
 		});
-
-		for (let server = 0; server < newServers.length; ++server) {
-			DomainUtil.updateDomain(server, newServers[tabMap[server]]);
-		}
+		this.servers = newServers;
 
 		this.reloadView();
 	}
@@ -261,13 +256,13 @@ class ServerManagerView {
 		});
 	}
 
-	initTabs(): void {
-		const servers = DomainUtil.getDomains();
-		this.servers = servers;
-		if (servers.length > 0) {
-			for (let i = 0; i < servers.length; i++) {
-				this.initServer(servers[i], i);
-				DomainUtil.updateSavedServer(servers[i].url, i);
+	initTabs(refresh: boolean = false): void {
+		if (this.servers.length > 0) {
+			for (let i = 0; i < this.servers.length; i++) {
+				this.initServer(this.servers[i], i);
+				if (!refresh) {
+					DomainUtil.updateSavedServer(this.servers[i].url, i);
+				}
 				this.activateTab(i);
 			}
 			// Open last active tab
@@ -618,14 +613,14 @@ class ServerManagerView {
 		this.$webviewsContainer.innerHTML = '';
 	}
 
-	reloadView(): void {
+	reloadView(refresh: boolean = false): void {
 		// Save and remember the index of last active tab so that we can use it later
 		const lastActiveTab = this.tabs[this.activeTabIndex].props.index;
 		ConfigUtil.setConfigItem('lastActiveTab', lastActiveTab);
 
 		// Destroy the current view and re-initiate it
 		this.destroyView();
-		this.initTabs();
+		this.initTabs(refresh);
 		this.initServerActions();
 	}
 
@@ -725,6 +720,12 @@ class ServerManagerView {
 				}
 			});
 		}
+
+		ipcRenderer.on('save-domains', () => {
+			for (let server = 0; server < this.servers.length; ++server) {
+				DomainUtil.updateDomain(server, this.servers[server]);
+			}
+		});
 
 		ipcRenderer.on('open-settings', (event: Event, settingNav: string) => {
 			this.openSettings(settingNav);

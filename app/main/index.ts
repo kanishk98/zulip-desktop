@@ -365,6 +365,7 @@ app.on('ready', () => {
 });
 
 app.on('before-quit', () => {
+	mainWindow.webContents.send('save-domains');
 	isQuitting = true;
 });
 
