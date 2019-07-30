@@ -1,6 +1,7 @@
 'use strict';
 
 import { ipcRenderer, remote, clipboard, shell } from 'electron';
+import sortable from 'sortablejs';
 import { feedbackHolder } from './feedback';
 
 import path = require('path');
@@ -86,6 +87,7 @@ class ServerManagerView {
 	$backTooltip: HTMLElement;
 	$dndTooltip: HTMLElement;
 	$sidebar: Element;
+	$drag: HTMLElement;
 	$fullscreenPopup: Element;
 	$fullscreenEscapeKey: string;
 	loading: AnyObject;
@@ -93,6 +95,7 @@ class ServerManagerView {
 	tabs: ServerOrFunctionalTab[];
 	functionalTabs: AnyObject;
 	tabIndex: number;
+	$sortable: sortable;
 	constructor() {
 		this.$addServerButton = document.querySelector('#add-tab');
 		this.$tabsContainer = document.querySelector('#tabs-container');
@@ -120,6 +123,7 @@ class ServerManagerView {
 		this.$dndTooltip = $actionsContainer.querySelector('#dnd-tooltip');
 
 		this.$sidebar = document.querySelector('#sidebar');
+		this.$drag = document.querySelector('#simple-list');
 
 		this.$fullscreenPopup = document.querySelector('#fullscreen-popup');
 		this.$fullscreenEscapeKey = process.platform === 'darwin' ? '^⌘F' : 'F11';
@@ -230,6 +234,7 @@ class ServerManagerView {
 	initSidebar(): void {
 		const showSidebar = ConfigUtil.getConfigItem('showSidebar', true);
 		this.toggleSidebar(showSidebar);
+		this.$sortable = sortable.create(this.$drag, {});
 	}
 
 	initTabs(): void {
