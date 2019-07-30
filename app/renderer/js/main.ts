@@ -18,13 +18,7 @@ import FunctionalTab = require('./components/functional-tab');
 import ConfigUtil = require('./utils/config-util');
 import DNDUtil = require('./utils/dnd-util');
 import ReconnectUtil = require('./utils/reconnect-util');
-import Logger = require('./utils/logger-util');
 import CommonUtil = require('./utils/common-util');
-
-const logger = new Logger({
-	file: 'errors.log',
-	timestamp: true
-});
 
 interface FunctionalTabProps {
 	name: string;
@@ -478,6 +472,8 @@ class ServerManagerView {
 	}
 
 	openNetworkTroubleshooting(index: number): void {
+		const reconnectUtil = new ReconnectUtil(this.tabs[index].webview);
+		reconnectUtil.pollInternetAndReload();
 		this.tabs[index].webview.props.url = `file://${rendererDirectory}/network.html`;
 		this.tabs[index].showNetworkError();
 	}
@@ -881,17 +877,7 @@ class ServerManagerView {
 
 window.addEventListener('load', () => {
 	const serverManagerView = new ServerManagerView();
-	const reconnectUtil = new ReconnectUtil(serverManagerView);
 	serverManagerView.init();
-	window.addEventListener('online', () => {
-		reconnectUtil.pollInternetAndReload();
-	});
-
-	window.addEventListener('offline', () => {
-		reconnectUtil.clearState();
-		logger.log('No internet connection, you are offline.');
-	});
-
 	// only start electron-connect (auto reload on change) when its ran
 	// from `npm run dev` or `gulp dev` and not from `npm start` when
 	// app is started `npm start` main process's proces.argv will have
