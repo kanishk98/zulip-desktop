@@ -92,6 +92,7 @@ class ServerManagerView {
 	$fullscreenEscapeKey: string;
 	loading: AnyObject;
 	activeTabIndex: number;
+	servers: ServerOrFunctionalTab[];
 	tabs: ServerOrFunctionalTab[];
 	functionalTabs: AnyObject;
 	tabIndex: number;
@@ -131,6 +132,7 @@ class ServerManagerView {
 
 		this.loading = {};
 		this.activeTabIndex = -1;
+		this.servers = [];
 		this.tabs = [];
 		this.functionalTabs = {};
 		this.tabIndex = 0;
@@ -231,14 +233,37 @@ class ServerManagerView {
 		}
 	}
 
+	onEnd(): void {
+		const newServers: any[] | ServerOrFunctionalTab[] = [];
+		const tabMap: any = {};
+		const tabElements = document.querySelectorAll('#tabs-container .tab');
+		tabElements.forEach((el, index) => {
+			const oldIndex = Number(el.getAttribute('data-tab-id')) % this.servers.length;
+			tabMap[index] = oldIndex;
+			newServers.push(this.servers[index]);
+			el.setAttribute('data-tab-id', index.toString());
+		});
+
+		for (let server = 0; server < newServers.length; ++server) {
+			DomainUtil.updateDomain(server, newServers[tabMap[server]]);
+		}
+
+		this.reloadView();
+	}
+
 	initSidebar(): void {
 		const showSidebar = ConfigUtil.getConfigItem('showSidebar', true);
 		this.toggleSidebar(showSidebar);
-		this.$sortable = sortable.create(this.$drag, {});
+		// Allow dragging of server tabs and update the data-tab-id
+		this.$sortable = sortable.create(this.$drag, {
+			dataIdAttr: 'data-sortable-id',
+			onEnd: this.onEnd.bind(this)
+		});
 	}
 
 	initTabs(): void {
 		const servers = DomainUtil.getDomains();
+		this.servers = servers;
 		if (servers.length > 0) {
 			for (let i = 0; i < servers.length; i++) {
 				this.initServer(servers[i], i);
