@@ -366,7 +366,9 @@ app.on('ready', () => {
 
 app.on('before-quit', () => {
 	mainWindow.webContents.send('save-domains');
-	isQuitting = true;
+	setTimeout(() => {
+		isQuitting = true;
+	}, 1000);
 });
 
 // Send crash reports
