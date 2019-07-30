@@ -279,7 +279,7 @@ class ServerManagerView {
 					}
 					this.showLoading(this.loading[this.tabs[this.activeTabIndex].webview.props.url]);
 				},
-				onNetworkError: this.openNetworkTroubleshooting.bind(this),
+				onNetworkError: (index: number) => this.openNetworkTroubleshooting(index),
 				onTitleChange: this.updateBadge.bind(this),
 				nodeIntegration: false,
 				preload: true
@@ -445,7 +445,7 @@ class ServerManagerView {
 					}
 					this.showLoading(this.loading[this.tabs[this.activeTabIndex].webview.props.url]);
 				},
-				onNetworkError: this.openNetworkTroubleshooting.bind(this),
+				onNetworkError: (index: number) => this.openNetworkTroubleshooting(index),
 				onTitleChange: this.updateBadge.bind(this),
 				nodeIntegration: true,
 				preload: false
@@ -477,12 +477,9 @@ class ServerManagerView {
 		});
 	}
 
-	openNetworkTroubleshooting(): void {
-		this.openFunctionalTab({
-			name: 'Network Troubleshooting',
-			materialIcon: 'network_check',
-			url: `file://${rendererDirectory}/network.html`
-		});
+	openNetworkTroubleshooting(index: number): void {
+		this.tabs[index].webview.props.url = `file://${rendererDirectory}/network.html`;
+		this.tabs[index].showNetworkError();
 	}
 
 	activateLastTab(index: number): void {
