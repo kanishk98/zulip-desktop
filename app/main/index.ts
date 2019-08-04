@@ -268,7 +268,7 @@ app.on('ready', () => {
 	});
 
 	ipcMain.on('fix-bounds', () => {
-		ViewManager.fixBounds();
+		ViewManager.fixBounds(mainWindow);
 	});
 
 	ipcMain.on('update-badge', (_event: Electron.IpcMessageEvent, messageCount: number) => {
