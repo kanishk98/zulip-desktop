@@ -227,7 +227,7 @@ app.on('ready', () => {
 	// 		height: mainWindowState.height - paddingHeight,
 	// 		webPreferences: {
 	// 			plugins: true,
-	// 			partition: 'persist:webviewsession'
+	// 			partition: 'persist:viewsession'
 	// 		}
 	// 	});
 	// 	pdfWindow.loadURL(url);
@@ -236,7 +236,7 @@ app.on('ready', () => {
 	// 	pdfWindow.setMenu(null);
 	// });
 
-	// Reload full app not just webview, useful in debugging
+	// Reload full app not just view, useful in debugging
 	ipcMain.on('reload-full-app', () => {
 		ViewManager.destroyAll();
 		mainWindow.reload();
