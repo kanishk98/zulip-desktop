@@ -1,9 +1,5 @@
 'use strict';
-import JsonDB from 'node-json-db';
-
-import fs = require('fs');
-import path = require('path');
-import electron = require('electron');
+import LevelDB = require('./leveldb-util');
 import Logger = require('./logger-util');
 import EnterpriseUtil = require('./enterprise-util');
 
@@ -13,93 +9,47 @@ const logger = new Logger({
 });
 
 let instance: null | ConfigUtil = null;
-let dialog: Electron.Dialog = null;
-let app: Electron.App = null;
-
-/* To make the util runnable in both main and renderer process */
-if (process.type === 'renderer') {
-	const { remote } = electron;
-	dialog = remote.dialog;
-	app = remote.app;
-} else {
-	dialog = electron.dialog;
-	app = electron.app;
-}
 
 class ConfigUtil {
-	db: JsonDB;
+	db: any;
 
 	constructor() {
 		if (instance) {
 			return instance;
 		} else {
+			this.db = LevelDB.settings;
 			instance = this;
 		}
-
-		this.reloadDB();
-		return instance;
 	}
 
-	getConfigItem(key: string, defaultValue: any = null): any {
+	async getConfigItem(key: string, defaultValue: any = null): Promise<any> {
 		try {
-			this.db.reload();
+			return this.db.getItem(key, defaultValue);
 		} catch (err) {
-			logger.error('Error while reloading settings.json: ');
 			logger.error(err);
-		}
-		const value = this.db.getData('/')[key];
-		if (value === undefined) {
-			this.setConfigItem(key, defaultValue);
-			return defaultValue;
-		} else {
-			return value;
 		}
 	}
 
 	// This function returns whether a key exists in the configuration file (settings.json)
-	isConfigItemExists(key: string): boolean {
+	async isConfigItemExists(key: string): Promise<boolean> {
 		try {
-			this.db.reload();
+			return await this.db.doesItemExist(key);
 		} catch (err) {
-			logger.error('Error while reloading settings.json: ');
 			logger.error(err);
+			return false;
 		}
-		const value = this.db.getData('/')[key];
-		return (value !== undefined);
 	}
 
-	setConfigItem(key: string, value: any, override? : boolean): void {
+	async setConfigItem(key: string, value: any, override? : boolean): Promise<void> {
 		if (EnterpriseUtil.configItemExists(key) && !override) {
 			// if item is in global config and we're not trying to override
 			return;
 		}
-		this.db.push(`/${key}`, value, true);
-		this.db.save();
+		await this.db.setItem(key, value);
 	}
 
-	removeConfigItem(key: string): void {
-		this.db.delete(`/${key}`);
-		this.db.save();
-	}
-
-	reloadDB(): void {
-		const settingsJsonPath = path.join(app.getPath('userData'), '/config/settings.json');
-		try {
-			const file = fs.readFileSync(settingsJsonPath, 'utf8');
-			JSON.parse(file);
-		} catch (err) {
-			if (fs.existsSync(settingsJsonPath)) {
-				fs.unlinkSync(settingsJsonPath);
-				dialog.showErrorBox(
-					'Error saving settings',
-					'We encountered an error while saving the settings.'
-				);
-				logger.error('Error while JSON parsing settings.json: ');
-				logger.error(err);
-				logger.reportSentry(err);
-			}
-		}
-		this.db = new JsonDB(settingsJsonPath, true, true);
+	async removeConfigItem(key: string): Promise<void> {
+		await this.db.deleteItem(key);
 	}
 }
 
