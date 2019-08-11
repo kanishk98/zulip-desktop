@@ -33,7 +33,7 @@ class RequestUtil {
 
 	// ignoreCerts parameter helps in fetching server icon and
 	// other server details when user chooses to ignore certificate warnings
-	requestOptions(domain: string, ignoreCerts: boolean): RequestUtilResponse {
+	async requestOptions(domain: string, ignoreCerts: boolean): Promise<RequestUtilResponse> {
 		domain = this.formatUrl(domain);
 		const certificate = CertificateUtil.getCertificate(
 			encodeURIComponent(domain)
@@ -47,7 +47,7 @@ class RequestUtil {
 				logger.warn(`Error while trying to get certificate: ${err}`);
 			}
 		}
-		const proxyEnabled = ConfigUtil.getConfigItem('useManualProxy') || ConfigUtil.getConfigItem('useSystemProxy');
+		const proxyEnabled = await ConfigUtil.getConfigItem('useManualProxy') || await ConfigUtil.getConfigItem('useSystemProxy');
 		// If certificate for the domain exists add it as a ca key in the request's parameter else consider only domain as the parameter for request
 		// Add proxy as a parameter if it is being used.
 		return {

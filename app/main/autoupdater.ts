@@ -7,7 +7,7 @@ import log = require('electron-log');
 import isDev = require('electron-is-dev');
 import ConfigUtil = require('../renderer/js/utils/config-util');
 
-export function appUpdater(updateFromMenu = false): void {
+export async function appUpdater(updateFromMenu = false): Promise<void> {
 	// Don't initiate auto-updates in development
 	if (isDev) {
 		return;
@@ -29,7 +29,7 @@ export function appUpdater(updateFromMenu = false): void {
 	autoUpdater.logger = log;
 
 	// Handle auto updates for beta/pre releases
-	const isBetaUpdate = ConfigUtil.getConfigItem('betaUpdate');
+	const isBetaUpdate = await ConfigUtil.getConfigItem('betaUpdate');
 
 	autoUpdater.allowPrerelease = isBetaUpdate || false;
 

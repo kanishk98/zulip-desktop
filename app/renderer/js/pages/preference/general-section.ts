@@ -20,7 +20,7 @@ class GeneralSection extends BaseSection {
 		this.props = props;
 	}
 
-	template(): string {
+	async template(): Promise<string> {
 		return `
             <div class="settings-pane">
                 <div class="title">${t.__('Appearance')}</div>
@@ -105,7 +105,7 @@ class GeneralSection extends BaseSection {
 			</div>
 			<div class="setting-row" id="remove-custom-css">
 				<div class="setting-description">
-					<div class="selected-css-path" id="custom-css-path">${ConfigUtil.getConfigItem('customCSS')}</div>
+					<div class="selected-css-path" id="custom-css-path">${await ConfigUtil.getConfigItem('customCSS')}</div>
 				</div>
 				<div class="action red" id="css-delete-action">
 					<i class="material-icons">indeterminate_check_box</i>
@@ -120,7 +120,7 @@ class GeneralSection extends BaseSection {
 					</div>
 					<div class="setting-row">
 						<div class="setting-description">
-							<div class="download-folder-path">${ConfigUtil.getConfigItem('downloadsPath', `${app.getPath('downloads')}`)}</div>
+							<div class="download-folder-path">${await ConfigUtil.getConfigItem('downloadsPath', `${app.getPath('downloads')}`)}</div>
 						</div>
 					</div>
 
@@ -174,12 +174,12 @@ class GeneralSection extends BaseSection {
 		}
 	}
 
-	updateTrayOption(): void {
+	async updateTrayOption(): Promise<void> {
 		this.generateSettingOption({
 			$element: document.querySelector('#tray-option .setting-control'),
-			value: ConfigUtil.getConfigItem('trayIcon', true),
-			clickHandler: () => {
-				const newValue = !ConfigUtil.getConfigItem('trayIcon');
+			value: await ConfigUtil.getConfigItem('trayIcon', true),
+			clickHandler: async () => {
+				const newValue = !await ConfigUtil.getConfigItem('trayIcon');
 				ConfigUtil.setConfigItem('trayIcon', newValue);
 				ipcRenderer.send('forward-message', 'toggletray');
 				this.updateTrayOption();
@@ -187,12 +187,12 @@ class GeneralSection extends BaseSection {
 		});
 	}
 
-	updateMenubarOption(): void {
+	async updateMenubarOption(): Promise<void> {
 		this.generateSettingOption({
 			$element: document.querySelector('#menubar-option .setting-control'),
-			value: ConfigUtil.getConfigItem('autoHideMenubar', false),
-			clickHandler: () => {
-				const newValue = !ConfigUtil.getConfigItem('autoHideMenubar');
+			value: await ConfigUtil.getConfigItem('autoHideMenubar', false),
+			clickHandler: async () => {
+				const newValue = !await ConfigUtil.getConfigItem('autoHideMenubar');
 				ConfigUtil.setConfigItem('autoHideMenubar', newValue);
 				ipcRenderer.send('toggle-menubar', newValue);
 				this.updateMenubarOption();
@@ -200,12 +200,12 @@ class GeneralSection extends BaseSection {
 		});
 	}
 
-	updateBadgeOption(): void {
+	async updateBadgeOption(): Promise<void> {
 		this.generateSettingOption({
 			$element: document.querySelector('#badge-option .setting-control'),
-			value: ConfigUtil.getConfigItem('badgeOption', true),
-			clickHandler: () => {
-				const newValue = !ConfigUtil.getConfigItem('badgeOption');
+			value: await ConfigUtil.getConfigItem('badgeOption', true),
+			clickHandler: async () => {
+				const newValue = !await ConfigUtil.getConfigItem('badgeOption');
 				ConfigUtil.setConfigItem('badgeOption', newValue);
 				ipcRenderer.send('toggle-badge-option', newValue);
 				this.updateBadgeOption();
@@ -213,37 +213,37 @@ class GeneralSection extends BaseSection {
 		});
 	}
 
-	updateDockBouncing(): void {
+	async updateDockBouncing(): Promise<void> {
 		this.generateSettingOption({
 			$element: document.querySelector('#dock-bounce-option .setting-control'),
-			value: ConfigUtil.getConfigItem('dockBouncing', true),
-			clickHandler: () => {
-				const newValue = !ConfigUtil.getConfigItem('dockBouncing');
+			value: await ConfigUtil.getConfigItem('dockBouncing', true),
+			clickHandler: async () => {
+				const newValue = !await ConfigUtil.getConfigItem('dockBouncing');
 				ConfigUtil.setConfigItem('dockBouncing', newValue);
 				this.updateDockBouncing();
 			}
 		});
 	}
 
-	updateFlashTaskbar(): void {
+	async updateFlashTaskbar(): Promise<void> {
 		this.generateSettingOption({
 			$element: document.querySelector('#flash-taskbar-option .setting-control'),
-			value: ConfigUtil.getConfigItem('flashTaskbarOnMessage', true),
-			clickHandler: () => {
-				const newValue = !ConfigUtil.getConfigItem('flashTaskbarOnMessage');
+			value: await ConfigUtil.getConfigItem('flashTaskbarOnMessage', true),
+			clickHandler: async () => {
+				const newValue = !await ConfigUtil.getConfigItem('flashTaskbarOnMessage');
 				ConfigUtil.setConfigItem('flashTaskbarOnMessage', newValue);
 				this.updateFlashTaskbar();
 			}
 		});
 	}
 
-	autoUpdateOption(): void {
+	async autoUpdateOption(): Promise<void> {
 		this.generateSettingOption({
 			$element: document.querySelector('#autoupdate-option .setting-control'),
 			disabled: EnterpriseUtil.configItemExists('autoUpdate'),
-			value: ConfigUtil.getConfigItem('autoUpdate', true),
-			clickHandler: () => {
-				const newValue = !ConfigUtil.getConfigItem('autoUpdate');
+			value: await ConfigUtil.getConfigItem('autoUpdate', true),
+			clickHandler: async () => {
+				const newValue = !await ConfigUtil.getConfigItem('autoUpdate');
 				ConfigUtil.setConfigItem('autoUpdate', newValue);
 				if (!newValue) {
 					ConfigUtil.setConfigItem('betaUpdate', false);
@@ -254,13 +254,13 @@ class GeneralSection extends BaseSection {
 		});
 	}
 
-	betaUpdateOption(): void {
+	async betaUpdateOption(): Promise<void> {
 		this.generateSettingOption({
 			$element: document.querySelector('#betaupdate-option .setting-control'),
-			value: ConfigUtil.getConfigItem('betaUpdate', false),
-			clickHandler: () => {
-				const newValue = !ConfigUtil.getConfigItem('betaUpdate');
-				if (ConfigUtil.getConfigItem('autoUpdate')) {
+			value: await ConfigUtil.getConfigItem('betaUpdate', false),
+			clickHandler: async () => {
+				const newValue = !await ConfigUtil.getConfigItem('betaUpdate');
+				if (await ConfigUtil.getConfigItem('autoUpdate')) {
 					ConfigUtil.setConfigItem('betaUpdate', newValue);
 					this.betaUpdateOption();
 				}
@@ -268,12 +268,12 @@ class GeneralSection extends BaseSection {
 		});
 	}
 
-	updateSilentOption(): void {
+	async updateSilentOption(): Promise<void> {
 		this.generateSettingOption({
 			$element: document.querySelector('#silent-option .setting-control'),
-			value: ConfigUtil.getConfigItem('silent', false),
-			clickHandler: () => {
-				const newValue = !ConfigUtil.getConfigItem('silent', true);
+			value: await ConfigUtil.getConfigItem('silent', false),
+			clickHandler: async () => {
+				const newValue = !await ConfigUtil.getConfigItem('silent', true);
 				ConfigUtil.setConfigItem('silent', newValue);
 				this.updateSilentOption();
 				// TODO: TypeScript: currentWindow of type BrowserWindow doesn't
@@ -283,24 +283,24 @@ class GeneralSection extends BaseSection {
 		});
 	}
 
-	showDesktopNotification(): void {
+	async showDesktopNotification(): Promise<void> {
 		this.generateSettingOption({
 			$element: document.querySelector('#show-notification-option .setting-control'),
-			value: ConfigUtil.getConfigItem('showNotification', true),
-			clickHandler: () => {
-				const newValue = !ConfigUtil.getConfigItem('showNotification', true);
+			value: await ConfigUtil.getConfigItem('showNotification', true),
+			clickHandler: async () => {
+				const newValue = !await ConfigUtil.getConfigItem('showNotification', true);
 				ConfigUtil.setConfigItem('showNotification', newValue);
 				this.showDesktopNotification();
 			}
 		});
 	}
 
-	updateSidebarOption(): void {
+	async updateSidebarOption(): Promise<void> {
 		this.generateSettingOption({
 			$element: document.querySelector('#sidebar-option .setting-control'),
-			value: ConfigUtil.getConfigItem('showSidebar', true),
-			clickHandler: () => {
-				const newValue = !ConfigUtil.getConfigItem('showSidebar');
+			value: await ConfigUtil.getConfigItem('showSidebar', true),
+			clickHandler: async () => {
+				const newValue = !await ConfigUtil.getConfigItem('showSidebar');
 				ConfigUtil.setConfigItem('showSidebar', newValue);
 				ipcRenderer.send('forward-message', 'toggle-sidebar', newValue);
 				this.updateSidebarOption();
@@ -308,12 +308,12 @@ class GeneralSection extends BaseSection {
 		});
 	}
 
-	updateStartAtLoginOption(): void {
+	async updateStartAtLoginOption(): Promise<void> {
 		this.generateSettingOption({
 			$element: document.querySelector('#startAtLogin-option .setting-control'),
-			value: ConfigUtil.getConfigItem('startAtLogin', false),
-			clickHandler: () => {
-				const newValue = !ConfigUtil.getConfigItem('startAtLogin');
+			value: await ConfigUtil.getConfigItem('startAtLogin', false),
+			clickHandler: async () => {
+				const newValue = !await ConfigUtil.getConfigItem('startAtLogin');
 				ConfigUtil.setConfigItem('startAtLogin', newValue);
 				ipcRenderer.send('toggleAutoLauncher', newValue);
 				this.updateStartAtLoginOption();
@@ -321,24 +321,24 @@ class GeneralSection extends BaseSection {
 		});
 	}
 
-	enableSpellchecker(): void {
+	async enableSpellchecker(): Promise<void> {
 		this.generateSettingOption({
 			$element: document.querySelector('#enable-spellchecker-option .setting-control'),
-			value: ConfigUtil.getConfigItem('enableSpellchecker', true),
-			clickHandler: () => {
-				const newValue = !ConfigUtil.getConfigItem('enableSpellchecker');
+			value: await ConfigUtil.getConfigItem('enableSpellchecker', true),
+			clickHandler: async () => {
+				const newValue = !await ConfigUtil.getConfigItem('enableSpellchecker');
 				ConfigUtil.setConfigItem('enableSpellchecker', newValue);
 				this.enableSpellchecker();
 			}
 		});
 	}
 
-	enableErrorReporting(): void {
+	async enableErrorReporting(): Promise<void> {
 		this.generateSettingOption({
 			$element: document.querySelector('#enable-error-reporting .setting-control'),
-			value: ConfigUtil.getConfigItem('errorReporting', true),
-			clickHandler: () => {
-				const newValue = !ConfigUtil.getConfigItem('errorReporting');
+			value: await ConfigUtil.getConfigItem('errorReporting', true),
+			clickHandler: async () => {
+				const newValue = !await ConfigUtil.getConfigItem('errorReporting');
 				ConfigUtil.setConfigItem('errorReporting', newValue);
 				this.enableErrorReporting();
 			}
@@ -385,12 +385,12 @@ class GeneralSection extends BaseSection {
 		});
 	}
 
-	minimizeOnStart(): void {
+	async minimizeOnStart(): Promise<void> {
 		this.generateSettingOption({
 			$element: document.querySelector('#start-minimize-option .setting-control'),
-			value: ConfigUtil.getConfigItem('startMinimized', false),
-			clickHandler: () => {
-				const newValue = !ConfigUtil.getConfigItem('startMinimized');
+			value: await ConfigUtil.getConfigItem('startMinimized', false),
+			clickHandler: async () => {
+				const newValue = !await ConfigUtil.getConfigItem('startMinimized');
 				ConfigUtil.setConfigItem('startMinimized', newValue);
 				this.minimizeOnStart();
 			}
@@ -404,8 +404,8 @@ class GeneralSection extends BaseSection {
 		});
 	}
 
-	showCustomCSSPath(): void {
-		if (!ConfigUtil.getConfigItem('customCSS')) {
+	async showCustomCSSPath(): Promise<void> {
+		if (!await ConfigUtil.getConfigItem('customCSS')) {
 			const cssPATH: HTMLElement = document.querySelector('#remove-custom-css');
 			cssPATH.style.display = 'none';
 		}
@@ -440,12 +440,12 @@ class GeneralSection extends BaseSection {
 		});
 	}
 
-	showDownloadFolder(): void {
+	async showDownloadFolder(): Promise<void> {
 		this.generateSettingOption({
 			$element: document.querySelector('#show-download-folder .setting-control'),
-			value: ConfigUtil.getConfigItem('showDownloadFolder', false),
-			clickHandler: () => {
-				const newValue = !ConfigUtil.getConfigItem('showDownloadFolder');
+			value: await ConfigUtil.getConfigItem('showDownloadFolder', false),
+			clickHandler: async () => {
+				const newValue = !await ConfigUtil.getConfigItem('showDownloadFolder');
 				ConfigUtil.setConfigItem('showDownloadFolder', newValue);
 				this.showDownloadFolder();
 			}

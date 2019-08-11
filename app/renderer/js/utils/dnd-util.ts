@@ -15,8 +15,8 @@ interface Toggle {
 	newSettings: Setting;
 }
 
-export function toggle(): Toggle {
-	const dnd = !ConfigUtil.getConfigItem('dnd', false);
+export async function toggle(): Promise<Toggle> {
+	const dnd = !await ConfigUtil.getConfigItem('dnd', false);
 	const dndSettingList = ['showNotification', 'silent'];
 	if (process.platform === 'win32') {
 		dndSettingList.push('flashTaskbarOnMessage');
@@ -28,17 +28,20 @@ export function toggle(): Toggle {
 		newSettings = {};
 
 		// Iterate through the dndSettingList.
+		const oldSettingsUpdates = [];
 		for (const settingName of dndSettingList) {
 			// Store the current value of setting.
-			oldSettings[settingName] = ConfigUtil.getConfigItem(settingName);
+			oldSettingsUpdates.push(ConfigUtil.getConfigItem(settingName));
 			// New value of setting.
 			newSettings[settingName] = (settingName === 'silent');
 		}
 
+		await Promise.all(oldSettingsUpdates);
+
 		// Store old value in oldSettings.
 		ConfigUtil.setConfigItem('dndPreviousSettings', oldSettings);
 	} else {
-		newSettings = ConfigUtil.getConfigItem('dndPreviousSettings');
+		newSettings = await ConfigUtil.getConfigItem('dndPreviousSettings');
 	}
 
 	for (const settingName of dndSettingList) {

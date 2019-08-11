@@ -22,7 +22,11 @@ class DarwinNotification {
 	tag: string;
 
 	constructor(title: string, opts: NotificationOptions) {
-		const silent: boolean = ConfigUtil.getConfigItem('silent') || false;
+		this.init(title, opts);
+	}
+
+	async init(title: string, opts: NotificationOptions): Promise<void> {
+		const silent: boolean = await ConfigUtil.getConfigItem('silent') || false;
 		const { host, protocol } = location;
 		const { icon } = opts;
 		const profilePic = url.resolve(`${protocol}//${host}`, icon);

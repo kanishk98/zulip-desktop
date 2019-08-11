@@ -32,12 +32,15 @@ class WebView extends BaseComponent {
 
 	constructor(props: WebViewProps) {
 		super();
+		this.setupWebview(props);
+	}
 
+	async setupWebview(props: WebViewProps): Promise<void> {
 		this.props = props;
 		this.zoomFactor = 1.0;
 		this.loading = true;
 		this.badgeCount = 0;
-		this.customCSS = ConfigUtil.getConfigItem('customCSS');
+		this.customCSS = await ConfigUtil.getConfigItem('customCSS');
 		this.$webviewsContainer = document.querySelector('#webviews-container').classList;
 	}
 
@@ -152,7 +155,7 @@ class WebView extends BaseComponent {
 		return messageCountInTitle ? Number(messageCountInTitle[1]) : 0;
 	}
 
-	show(): void {
+	async show(): Promise<void> {
 		// Do not show WebView if another tab was selected and this tab should be in background.
 		if (!this.props.isActive()) {
 			return;
@@ -178,7 +181,7 @@ class WebView extends BaseComponent {
 		this.$el.insertCSS(fs.readFileSync(path.join(__dirname, '/../../css/preload.css'), 'utf8'));
 
 		// get customCSS again from config util to avoid warning user again
-		this.customCSS = ConfigUtil.getConfigItem('customCSS');
+		this.customCSS = await ConfigUtil.getConfigItem('customCSS');
 		if (this.customCSS) {
 			if (!fs.existsSync(this.customCSS)) {
 				this.customCSS = null;

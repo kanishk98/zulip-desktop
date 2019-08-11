@@ -56,7 +56,7 @@ class NetworkSection extends BaseSection {
 		`;
 	}
 
-	init(): void {
+	async init(): Promise<void> {
 		this.props.$root.innerHTML = this.template();
 		this.$proxyPAC = document.querySelector('#proxy-pac-option .setting-input-value');
 		this.$proxyRules = document.querySelector('#proxy-rules-option .setting-input-value');
@@ -65,9 +65,9 @@ class NetworkSection extends BaseSection {
 		this.$manualProxyBlock = this.props.$root.querySelector('.manual-proxy-block');
 		this.initProxyOption();
 
-		this.$proxyPAC.value = ConfigUtil.getConfigItem('proxyPAC', '');
-		this.$proxyRules.value = ConfigUtil.getConfigItem('proxyRules', '');
-		this.$proxyBypass.value = ConfigUtil.getConfigItem('proxyBypass', '');
+		this.$proxyPAC.value = await await ConfigUtil.getConfigItem('proxyPAC', '');
+		this.$proxyRules.value = await await ConfigUtil.getConfigItem('proxyRules', '');
+		this.$proxyBypass.value = await await ConfigUtil.getConfigItem('proxyBypass', '');
 
 		this.$proxySaveAction.addEventListener('click', () => {
 			ConfigUtil.setConfigItem('proxyPAC', this.$proxyPAC.value);
@@ -78,8 +78,8 @@ class NetworkSection extends BaseSection {
 		});
 	}
 
-	initProxyOption(): void {
-		const manualProxyEnabled = ConfigUtil.getConfigItem('useManualProxy', false);
+	async initProxyOption(): Promise<void> {
+		const manualProxyEnabled = await await ConfigUtil.getConfigItem('useManualProxy', false);
 		this.toggleManualProxySettings(manualProxyEnabled);
 
 		this.updateProxyOption();
@@ -93,13 +93,13 @@ class NetworkSection extends BaseSection {
 		}
 	}
 
-	updateProxyOption(): void {
+	async updateProxyOption(): Promise<void> {
 		this.generateSettingOption({
 			$element: document.querySelector('#use-system-settings .setting-control'),
-			value: ConfigUtil.getConfigItem('useSystemProxy', false),
-			clickHandler: () => {
-				const newValue = !ConfigUtil.getConfigItem('useSystemProxy');
-				const manualProxyValue = ConfigUtil.getConfigItem('useManualProxy');
+			value: await ConfigUtil.getConfigItem('useSystemProxy', false),
+			clickHandler: async () => {
+				const newValue = !await ConfigUtil.getConfigItem('useSystemProxy');
+				const manualProxyValue = await ConfigUtil.getConfigItem('useManualProxy');
 				if (manualProxyValue && newValue) {
 					ConfigUtil.setConfigItem('useManualProxy', !manualProxyValue);
 					this.toggleManualProxySettings(!manualProxyValue);
@@ -115,10 +115,10 @@ class NetworkSection extends BaseSection {
 		});
 		this.generateSettingOption({
 			$element: document.querySelector('#use-manual-settings .setting-control'),
-			value: ConfigUtil.getConfigItem('useManualProxy', false),
-			clickHandler: () => {
-				const newValue = !ConfigUtil.getConfigItem('useManualProxy');
-				const systemProxyValue = ConfigUtil.getConfigItem('useSystemProxy');
+			value: await ConfigUtil.getConfigItem('useManualProxy', false),
+			clickHandler: async () => {
+				const newValue = !await ConfigUtil.getConfigItem('useManualProxy');
+				const systemProxyValue = await ConfigUtil.getConfigItem('useSystemProxy');
 				this.toggleManualProxySettings(newValue);
 				if (systemProxyValue && newValue) {
 					ConfigUtil.setConfigItem('useSystemProxy', !systemProxyValue);

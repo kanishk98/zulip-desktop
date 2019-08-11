@@ -105,7 +105,7 @@ class AppMenu {
 		}];
 	}
 
-	getViewSubmenu(): Electron.MenuItemConstructorOptions[] {
+	async getViewSubmenu(): Promise<Electron.MenuItemConstructorOptions[]> {
 		return [{
 			label: t.__('Reload'),
 			accelerator: 'CommandOrControl+R',
@@ -172,7 +172,7 @@ class AppMenu {
 			}
 		}, {
 			label: t.__('Auto hide Menu bar'),
-			checked: ConfigUtil.getConfigItem('autoHideMenubar', false),
+			checked: await ConfigUtil.getConfigItem('autoHideMenubar', false),
 			visible: process.platform !== 'darwin',
 			click(_item: any, focusedWindow: any) {
 				if (focusedWindow) {
@@ -281,7 +281,7 @@ class AppMenu {
 		return initialSubmenu;
 	}
 
-	getDarwinTpl(props: any): Electron.MenuItemConstructorOptions[] {
+	async getDarwinTpl(props: any): Promise<Electron.MenuItemConstructorOptions[]> {
 		const { tabs, activeTabIndex, enableMenu } = props;
 
 		return [{
@@ -297,8 +297,8 @@ class AppMenu {
 			}, {
 				label: t.__('Toggle Do Not Disturb'),
 				accelerator: 'Cmd+Shift+M',
-				click() {
-					const dndUtil = DNDUtil.toggle();
+				async click() {
+					const dndUtil = await DNDUtil.toggle();
 					AppMenu.sendAction('toggle-dnd', dndUtil.dnd, dndUtil.newSettings);
 				}
 			}, {
@@ -395,7 +395,7 @@ class AppMenu {
 			}]
 		}, {
 			label: t.__('View'),
-			submenu: this.getViewSubmenu()
+			submenu: await this.getViewSubmenu()
 		}, {
 			label: t.__('History'),
 			submenu: this.getHistorySubmenu(enableMenu)
@@ -412,7 +412,7 @@ class AppMenu {
 		}];
 	}
 
-	getOtherTpl(props: any): Electron.MenuItemConstructorOptions[] {
+	async getOtherTpl(props: any): Promise<Electron.MenuItemConstructorOptions[]> {
 		const { tabs, activeTabIndex, enableMenu } = props;
 		return [{
 			label: t.__('File'),
@@ -429,8 +429,8 @@ class AppMenu {
 			}, {
 				label: t.__('Toggle Do Not Disturb'),
 				accelerator: 'Ctrl+Shift+M',
-				click() {
-					const dndUtil = DNDUtil.toggle();
+				async click() {
+					const dndUtil = await DNDUtil.toggle();
 					AppMenu.sendAction('toggle-dnd', dndUtil.dnd, dndUtil.newSettings);
 				}
 			}, {
@@ -513,7 +513,7 @@ class AppMenu {
 			}]
 		}, {
 			label: t.__('View'),
-			submenu: this.getViewSubmenu()
+			submenu: await this.getViewSubmenu()
 		}, {
 			label: t.__('History'),
 			submenu: this.getHistorySubmenu(enableMenu)
@@ -591,8 +591,8 @@ class AppMenu {
 		});
 	}
 
-	setMenu(props: any): void {
-		const tpl = process.platform === 'darwin' ? this.getDarwinTpl(props) : this.getOtherTpl(props);
+	async setMenu(props: any): Promise<void> {
+		const tpl = process.platform === 'darwin' ? await this.getDarwinTpl(props) : await this.getOtherTpl(props);
 		const menu = Menu.buildFromTemplate(tpl);
 		Menu.setApplicationMenu(menu);
 	}

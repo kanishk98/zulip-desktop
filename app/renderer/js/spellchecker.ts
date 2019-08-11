@@ -13,8 +13,8 @@ const logger = new Logger({
 class SetupSpellChecker {
 	SpellCheckHandler: typeof SpellCheckHandler;
 	contextMenuListener: typeof ContextMenuListener;
-	init(serverLanguage: string): void {
-		if (ConfigUtil.getConfigItem('enableSpellchecker')) {
+	async init(serverLanguage: string): Promise<void> {
+		if (await ConfigUtil.getConfigItem('enableSpellchecker')) {
 			this.enableSpellChecker();
 		}
 		this.enableContextMenu(serverLanguage);

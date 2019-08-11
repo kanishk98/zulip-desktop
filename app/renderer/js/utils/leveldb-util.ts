@@ -31,6 +31,10 @@ class LevelDB {
 
 	async setItem(key: string, value: any): Promise<void> {
 		try {
+			if (value === null || value === undefined) {
+				logger.log(`Rejecting ${key} because value was ${value}.`);
+				return;
+			}
 			return await this.db.put(key, value);
 		} catch (err) {
 			logger.error(err);
@@ -46,6 +50,7 @@ class LevelDB {
 				// key does not exist in database
 				// no need to report this to Sentry
 				await this.setItem(key, defaultValue);
+				return defaultValue;
 			} else {
 				logger.error(err);
 				logger.reportSentry(err.toString());

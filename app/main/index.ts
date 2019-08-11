@@ -149,7 +149,7 @@ app.on('activate', () => {
 	}
 });
 
-app.on('ready', () => {
+app.on('ready', async () => {
 	AppMenu.setMenu({
 		tabs: []
 	});
@@ -157,18 +157,18 @@ app.on('ready', () => {
 
 	// Auto-hide menu bar on Windows + Linux
 	if (process.platform !== 'darwin') {
-		const shouldHideMenu = ConfigUtil.getConfigItem('autoHideMenubar') || false;
+		const shouldHideMenu = await ConfigUtil.getConfigItem('autoHideMenubar') || false;
 		mainWindow.setAutoHideMenuBar(shouldHideMenu);
 		mainWindow.setMenuBarVisibility(!shouldHideMenu);
 	}
 
 	// Initialize sentry for main process
-	const errorReporting = ConfigUtil.getConfigItem('errorReporting');
+	const errorReporting = await ConfigUtil.getConfigItem('errorReporting', true);
 	if (errorReporting) {
 		sentryInit();
 	}
 
-	const isSystemProxy = ConfigUtil.getConfigItem('useSystemProxy');
+	const isSystemProxy = await ConfigUtil.getConfigItem('useSystemProxy', false);
 
 	if (isSystemProxy) {
 		ProxyUtil.resolveSystemProxy(mainWindow);
@@ -176,17 +176,17 @@ app.on('ready', () => {
 
 	const page = mainWindow.webContents;
 
-	page.on('dom-ready', () => {
-		if (ConfigUtil.getConfigItem('startMinimized')) {
+	page.on('dom-ready', async () => {
+		if (await ConfigUtil.getConfigItem('startMinimized', false)) {
 			mainWindow.hide();
 		} else {
 			mainWindow.show();
 		}
 	});
 
-	page.once('did-frame-finish-load', () => {
+	page.once('did-frame-finish-load', async () => {
 		// Initiate auto-updates on MacOS and Windows
-		if (ConfigUtil.getConfigItem('autoUpdate')) {
+		if (await ConfigUtil.getConfigItem('autoUpdate', true)) {
 			appUpdater();
 		}
 	});
@@ -359,8 +359,8 @@ app.on('ready', () => {
 		event.sender.send('error-reporting-val', errorReporting);
 	});
 
-	ipcMain.on('save-last-tab', (_event: Electron.IpcMessageEvent, index: number) => {
-		ConfigUtil.setConfigItem('lastActiveTab', index);
+	ipcMain.on('save-last-tab', async (_event: Electron.IpcMessageEvent, index: number) => {
+		await ConfigUtil.setConfigItem('lastActiveTab', index);
 	});
 });
 

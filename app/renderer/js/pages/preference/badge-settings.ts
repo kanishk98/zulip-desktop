@@ -43,9 +43,9 @@ class BadgeSettings {
 		}
 	}
 
-	updateOverlayIcon(messageCount: number, mainWindow: electron.BrowserWindow): void {
+	async updateOverlayIcon(messageCount: number, mainWindow: electron.BrowserWindow): Promise<void> {
 		if (!mainWindow.isFocused()) {
-			mainWindow.flashFrame(ConfigUtil.getConfigItem('flashTaskbarOnMessage'));
+			mainWindow.flashFrame(await ConfigUtil.getConfigItem('flashTaskbarOnMessage'));
 		}
 		if (messageCount === 0) {
 			mainWindow.setOverlayIcon(null, '');

@@ -215,6 +215,8 @@ function toggleTray(): void {
 
 ipcRenderer.on('toggletray', toggleTray);
 
-if (ConfigUtil.getConfigItem('trayIcon', true)) {
-	createTray();
-}
+ConfigUtil.getConfigItem('trayIcon').then(trayIcon => {
+	if (trayIcon === true) {
+		createTray();
+	}
+});

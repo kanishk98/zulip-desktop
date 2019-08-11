@@ -149,25 +149,26 @@ class ServerManagerView {
 		});
 	}
 
-	loadProxy(): Promise<boolean> {
+	async loadProxy(): Promise<boolean> {
+		const proxyObject = {
+			pacScript: await ConfigUtil.getConfigItem('proxyPAC', ''),
+			proxyRules: await ConfigUtil.getConfigItem('proxyRules', ''),
+			proxyBypassRules: await ConfigUtil.getConfigItem('proxyBypass', '')
+		};
+		const proxyEnabledOld = await ConfigUtil.isConfigItemExists('useProxy');
+		const proxyEnableOldState = await ConfigUtil.getConfigItem('useProxy');
+		const proxyEnabled = await ConfigUtil.getConfigItem('useManualProxy') || await ConfigUtil.getConfigItem('useSystemProxy');
 		return new Promise(resolve => {
 			// To change proxyEnable to useManualProxy in older versions
-			const proxyEnabledOld = ConfigUtil.isConfigItemExists('useProxy');
 			if (proxyEnabledOld) {
-				const proxyEnableOldState = ConfigUtil.getConfigItem('useProxy');
 				if (proxyEnableOldState) {
 					ConfigUtil.setConfigItem('useManualProxy', true);
 				}
 				ConfigUtil.removeConfigItem('useProxy');
 			}
 
-			const proxyEnabled = ConfigUtil.getConfigItem('useManualProxy') || ConfigUtil.getConfigItem('useSystemProxy');
 			if (proxyEnabled) {
-				session.fromPartition('persist:webviewsession').setProxy({
-					pacScript: ConfigUtil.getConfigItem('proxyPAC', ''),
-					proxyRules: ConfigUtil.getConfigItem('proxyRules', ''),
-					proxyBypassRules: ConfigUtil.getConfigItem('proxyBypass', '')
-				}, resolve);
+				session.fromPartition('persist:webviewsession').setProxy(proxyObject, resolve);
 			} else {
 				session.fromPartition('persist:webviewsession').setProxy({
 					pacScript: '',
@@ -181,7 +182,7 @@ class ServerManagerView {
 	// Settings are initialized only when user clicks on General/Server/Network section settings
 	// In case, user doesn't visit these section, those values set to be null automatically
 	// This will make sure the default settings are correctly set to either true or false
-	initDefaultSettings(): void {
+	async initDefaultSettings(): Promise<void> {
 		// Default settings which should be respected
 		const settingOptions: SettingsOptions = {
 			autoHideMenubar: false,
@@ -226,19 +227,38 @@ class ServerManagerView {
 			settingOptions.autoHideMenubar = false;
 		}
 
+		const settingPromises = [];
+
 		for (const i in settingOptions) {
 			const setting = i as keyof SettingsOptions;
 			// give preference to defaults defined in global_config.json
 			if (EnterpriseUtil.configItemExists(setting)) {
 				ConfigUtil.setConfigItem(setting, EnterpriseUtil.getConfigItem(setting), true);
-			} else if (ConfigUtil.getConfigItem(setting) === null) {
-				ConfigUtil.setConfigItem(setting, settingOptions[setting]);
+			} else {
+				settingPromises.push(new Promise(resolve => {
+					ConfigUtil.getConfigItem(setting).then(res => {
+						if (res === null) {
+							resolve(true);
+						} else {
+							resolve(false);
+						}
+					}).catch(err => {
+						resolve(false);
+					});
+				}));
 			}
+			Promise.all(settingPromises).then(promiseResults => {
+				for (const result of promiseResults) {
+					if (result === true) {
+						ConfigUtil.setConfigItem(setting, settingOptions[setting]);
+					}
+				}
+			});
 		}
 	}
 
-	initSidebar(): void {
-		const showSidebar = ConfigUtil.getConfigItem('showSidebar', true);
+	async initSidebar(): Promise<void> {
+		const showSidebar = await ConfigUtil.getConfigItem('showSidebar', true);
 		this.toggleSidebar(showSidebar);
 	}
 
@@ -307,7 +327,7 @@ class ServerManagerView {
 		}
 	}
 
-	initTabs(): void {
+	async initTabs(): Promise<void> {
 		const servers = DomainUtil.getDomains();
 		if (servers.length > 0) {
 			for (let i = 0; i < servers.length; i++) {
@@ -316,7 +336,7 @@ class ServerManagerView {
 				this.activateTab(i);
 			}
 			// Open last active tab
-			this.activateTab(ConfigUtil.getConfigItem('lastActiveTab'));
+			this.activateTab(await ConfigUtil.getConfigItem('lastActiveTab'));
 			// Remove focus from the settings icon at sidebar bottom
 			this.$settingsButton.classList.remove('active');
 		} else if (this.presetOrgs.length === 0) {
@@ -386,8 +406,8 @@ class ServerManagerView {
 	}
 
 	initLeftSidebarEvents(): void {
-		this.$dndButton.addEventListener('click', () => {
-			const dndUtil = DNDUtil.toggle();
+		this.$dndButton.addEventListener('click', async () => {
+			const dndUtil = await DNDUtil.toggle();
 			ipcRenderer.send('forward-message', 'toggle-dnd', dndUtil.dnd, dndUtil.newSettings);
 		});
 		this.$reloadButton.addEventListener('click', () => {
@@ -411,8 +431,8 @@ class ServerManagerView {
 		this.sidebarHoverEvent(this.$dndButton, this.$dndTooltip);
 	}
 
-	initDNDButton(): void {
-		const dnd = ConfigUtil.getConfigItem('dnd', false);
+	async initDNDButton(): Promise<void> {
+		const dnd = await ConfigUtil.getConfigItem('dnd', false);
 		this.toggleDNDButton(dnd);
 	}
 

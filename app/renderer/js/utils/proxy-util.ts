@@ -23,14 +23,15 @@ class ProxyUtil {
 	}
 
 	// Return proxy to be used for a particular uri, to be used for request
-	getProxy(_uri: string): ProxyRule | void {
+	async getProxy(_uri: string): Promise<ProxyRule | void> {
 		const parsedUri = url.parse(_uri);
 		if (parsedUri === null) {
 			return;
 		}
 
 		const uri = parsedUri;
-		const proxyRules = ConfigUtil.getConfigItem('proxyRules', '').split(';');
+		const proxyRules: any = await ConfigUtil.getConfigItem('proxyRules', '');
+		proxyRules.split(';');
 		// If SPS is on and system uses no proxy then request should not try to use proxy from
 		// environment. NO_PROXY = '*' makes request ignore all environment proxy variables.
 		if (proxyRules[0] === '') {
@@ -125,13 +126,13 @@ class ProxyUtil {
 			});
 		});
 
-		Promise.all([httpProxy, httpsProxy, ftpProxy, socksProxy]).then(values => {
+		Promise.all([httpProxy, httpsProxy, ftpProxy, socksProxy]).then(async values => {
 			let proxyString = '';
 			values.forEach(proxy => {
 				proxyString += proxy;
 			});
 			ConfigUtil.setConfigItem('systemProxyRules', proxyString);
-			const useSystemProxy = ConfigUtil.getConfigItem('useSystemProxy');
+			const useSystemProxy = await ConfigUtil.getConfigItem('useSystemProxy');
 			if (useSystemProxy) {
 				ConfigUtil.setConfigItem('proxyRules', proxyString);
 			}
