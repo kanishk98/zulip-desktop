@@ -4,7 +4,14 @@ import path = require('path');
 import level = require('level');
 import Logger = require('./logger-util');
 
-const { app } = electron.remote;
+let app: Electron.App = null;
+
+if (process.type === 'renderer') {
+	const { remote } = electron;
+	app = remote.app;
+} else {
+	app = electron.app;
+}
 
 const logger = new Logger({
 	file: 'leveldb-util.log',
