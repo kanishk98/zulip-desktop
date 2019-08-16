@@ -870,6 +870,7 @@ class ServerManagerView {
 			const webviews: NodeListOf<Electron.WebviewTag> = document.querySelectorAll('webview');
 			webviews.forEach(webview => {
 				webview.send('set-idle');
+			});
 		});
 
 		ipcRenderer.on('open-network-settings', () => {
