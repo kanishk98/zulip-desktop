@@ -1,5 +1,4 @@
 'use strict';
-import JsonDB from 'node-json-db';
 
 import escape = require('escape-html');
 import request = require('request');
@@ -11,6 +10,7 @@ import electron = require('electron');
 import RequestUtil = require('./request-util');
 import EnterpriseUtil = require('./enterprise-util');
 import Messages = require('../../../resources/messages');
+import LevelDBUtil = require('./leveldb-util');
 
 const { app, dialog } = electron.remote;
 
@@ -19,49 +19,35 @@ const logger = new Logger({
 	timestamp: true
 });
 
-let instance: null | DomainUtil = null;
-
 const defaultIconUrl = '../renderer/img/icon.png';
 
 class DomainUtil {
-	db: JsonDB;
+	domains: Domain[];
+
 	constructor() {
-		if (instance) {
-			return instance;
-		} else {
-			instance = this;
-		}
-
+		this.domains = [];
 		this.reloadDB();
-		// Migrate from old schema
-		if (this.db.getData('/').domain) {
-			this.addDomain({
-				alias: 'Zulip',
-				url: this.db.getData('/domain')
+	}
+
+	reloadDB(): void {
+		if (process.type === 'renderer') {
+			LevelDBUtil.initDomainUtil().then(domains => {
+				this.domains = domains;
 			});
-			this.db.delete('/domain');
-		}
-
-		return instance;
-	}
-
-	getDomains(): any {
-		this.reloadDB();
-		if (this.db.getData('/').domains === undefined) {
-			return [];
-		} else {
-			return this.db.getData('/domains');
 		}
 	}
 
-	getDomain(index: number): any {
-		this.reloadDB();
-		return this.db.getData(`/domains[${index}]`);
+	getDomains(): Domain[] {
+		return this.domains;
+	}
+
+	getDomain(index: number): Domain {
+		return this.domains[index];
 	}
 
 	updateDomain(index: number, server: object): void {
-		this.reloadDB();
-		this.db.push(`/domains[${index}]`, server, true);
+		this.domains.splice(index, 0);
+		// add leveldb operation here
 	}
 
 	addDomain(server: any): Promise<void> {
@@ -70,13 +56,15 @@ class DomainUtil {
 			if (server.icon) {
 				this.saveServerIcon(server, ignoreCerts).then(localIconUrl => {
 					server.icon = localIconUrl;
-					this.db.push('/domains[]', server, true);
+					this.domains.push(server);
+					// add leveldb op here
 					this.reloadDB();
 					resolve();
 				});
 			} else {
 				server.icon = defaultIconUrl;
-				this.db.push('/domains[]', server, true);
+				this.domains.push(server);
+				// add leveldb op here
 				this.reloadDB();
 				resolve();
 			}
@@ -84,7 +72,8 @@ class DomainUtil {
 	}
 
 	removeDomains(): void {
-		this.db.delete('/domains');
+		this.domains = [];
+		// add leveldb op here
 		this.reloadDB();
 	}
 
@@ -92,8 +81,8 @@ class DomainUtil {
 		if (EnterpriseUtil.isPresetOrg(this.getDomain(index).url)) {
 			return false;
 		}
-		this.db.delete(`/domains[${index}]`);
-		this.reloadDB();
+		this.domains.splice(index, 1);
+		// add leveldb op here
 		return true;
 	}
 
@@ -101,8 +90,8 @@ class DomainUtil {
 	duplicateDomain(domain: any): boolean {
 		domain = this.formatUrl(domain);
 		const servers = this.getDomains();
-		for (const i in servers) {
-			if (servers[i].url === domain) {
+		for (const server of servers) {
+			if (server.url === domain) {
 				return true;
 			}
 		}
@@ -263,27 +252,6 @@ class DomainUtil {
 				}
 			});
 		});
-	}
-
-	reloadDB(): void {
-		const domainJsonPath = path.join(app.getPath('userData'), 'config/domain.json');
-		try {
-			const file = fs.readFileSync(domainJsonPath, 'utf8');
-			JSON.parse(file);
-		} catch (err) {
-			if (fs.existsSync(domainJsonPath)) {
-				fs.unlinkSync(domainJsonPath);
-				dialog.showErrorBox(
-					'Error saving new organization',
-					'There seems to be error while saving new organization, ' +
-					'you may have to re-add your previous organizations back.'
-				);
-				logger.error('Error while JSON parsing domain.json: ');
-				logger.error(err);
-				logger.reportSentry(err);
-			}
-		}
-		this.db = new JsonDB(domainJsonPath, true, true);
 	}
 
 	generateFilePath(url: string): string {

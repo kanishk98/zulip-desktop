@@ -15,6 +15,13 @@ class LevelDBUtil {
 		});
 	}
 
+	initDomainUtil(): Promise<Domain[]> {
+		return new Promise(resolve => {
+			const domains = ipcRenderer.sendSync('get-domains');
+			resolve(domains);
+		});
+	}
+
 	setConfigItem(key: string, value: any): void {
 		if (process.type === 'renderer') {
 			const { ipcRenderer } = electron;
@@ -31,6 +38,17 @@ class LevelDBUtil {
 			return;
 		}
 		LevelDB.settings.deleteItem(key);
+	}
+
+	setDomain(index: number, domain: Domain): void {
+		
+	}
+
+	removeDomain(index: number): void {
+		if (process.type === 'renderer') {
+			const { ipcRenderer } = electron;
+			ipcRenderer.send('db-delete-item', index.toString());
+		}
 	}
 }
 

@@ -378,6 +378,10 @@ app.on('ready', () => {
 	ipcMain.on('get-settings', (_event: Electron.IpcMessageEvent) => {
 		_event.returnValue = DataStore.settings;
 	});
+
+	ipcMain.on('get-domains', (_event: Electron.IpcMessageEvent) => {
+		_event.returnValue = DataStore.domains;
+	});
 });
 
 app.on('before-quit', () => {

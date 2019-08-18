@@ -11,10 +11,17 @@ const logger = new Logger({
 class DataStore {
 	settingsDB: any;
 	settings: any;
+	domainsDB: any;
+	domains: Domain[];
 	constructor() {
 		this.settings = {};
+		this.domains = [];
+
 		this.settingsDB = LevelDB.settings.db;
+		this.domainsDB = LevelDB.domains.db;
+
 		this.loadSettings();
+		this.loadDomains();
 	}
 
 	loadSettings(): void {
@@ -24,6 +31,14 @@ class DataStore {
 			}
 			this.settings[configItem.key] = configItem.value;
 			this.updateConfigUtil();
+		}).on('error', (err: Error) => {
+			logger.error(err);
+		});
+	}
+
+	loadDomains(): void {
+		this.domainsDB.createReadStream().on('data', (domain: any) => {
+			this.domains.push(domain.value);
 		}).on('error', (err: Error) => {
 			logger.error(err);
 		});
