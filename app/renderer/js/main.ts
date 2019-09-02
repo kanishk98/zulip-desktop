@@ -596,7 +596,9 @@ class ServerManagerView {
 				tab.updateBadge(count);
 			}
 		}
-		ipcRenderer.send('update-badge', messageCountAll);
+		if (Number.isInteger(messageCountAll)) {
+			ipcRenderer.send('update-badge', messageCountAll);
+		}
 	}
 
 	updateGeneralSettings(setting: string, value: any): void {
