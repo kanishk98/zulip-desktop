@@ -95,8 +95,8 @@ class ViewManager {
 			return;
 		}
 		this.selectedIndex = index;
-		this.fixBounds();
 		mainWindow.setBrowserView(view);
+		this.fixBounds();
 		if (!view.webContents.getURL()) {
 			const { url } = view;
 			view.webContents.loadURL(url);
